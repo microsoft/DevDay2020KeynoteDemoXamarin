@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:XamarinTV.ViewModels"
+    xmlns:mediamanager="clr-namespace:MediaManager.Forms;assembly=MediaManager.Forms"
+    x:Class="XamarinTV.Views.VideoPlayerView"
+    BackgroundColor="Transparent">
+    <ContentView.Resources>
+        <ResourceDictionary>
+
+            <Style
+                x:Key="HeaderStyle"
+                TargetType="Grid">
+                <Setter
+                    Property="HeightRequest"
+                    Value="44" />
+                <Setter
+                    Property="VerticalOptions"
+                    Value="Start" />
+            </Style>
+
+            <Style
+                x:Key="TitleStyle"
+                TargetType="Label">
+                <Setter
+                    Property="FontFamily"
+                    Value="{StaticResource PoppinsRegular}" />
+                <Setter
+                    Property="FontSize"
+                    Value="{StaticResource MidMediumSize}" />
+                <Setter
+                    Property="TextColor"
+                    Value="Gray" />
+                <Setter
+                    Property="LineBreakMode"
+                    Value="TailTruncation" />
+                <Setter
+                    Property="MaxLines"
+                    Value="1" />
+                <Setter
+                    Property="VerticalOptions"
+                    Value="Center" />
+                <Setter
+                    Property="Margin"
+                    Value="12, 0" />
+            </Style>
+
+            <Style
+                x:Key="VideoPlayerStyle"
+                TargetType="mediamanager:VideoView">
+                <Setter
+                    Property="BackgroundColor"
+                    Value="{DynamicResource BackgroundColor}" />
+                <Setter
+                    Property="AutoPlay"
+                    Value="True" />
+                <Setter
+                    Property="ShowControls"
+                    Value="True" />
+                <Setter
+                    Property="Repeat"
+                    Value="Off" />
+                <Setter
+                    Property="VerticalOptions"
+                    Value="FillAndExpand" />
+            </Style>
+
+            <Style
+                x:Key="CloseButtonStyle"
+                TargetType="ImageButton">
+                <Setter
+                    Property="BackgroundColor"
+                    Value="Transparent" />
+                <Setter
+                    Property="VerticalOptions"
+                    Value="Center" />
+                <Setter
+                    Property="Margin"
+                    Value="0,0,10,0" />
+            </Style>
+
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <ContentView.BindingContext>
+        <viewmodels:VideoPlayerViewModel />
+    </ContentView.BindingContext>
+    <ContentView.Content>
+        <Frame HeightRequest="300"
+            BackgroundColor="Black"
+            CornerRadius="0">
+            <Grid
+                RowSpacing="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition
+                        Height="*" />
+                    <RowDefinition
+                        Height="Auto" />
+                    <RowDefinition
+                        Height="*" />
+                </Grid.RowDefinitions>
+                <mediamanager:VideoView 
+                    Grid.Row="1"
+                    x:Name="VideoView"
+                    Style="{StaticResource VideoPlayerStyle}"/>
+                <!-- TODO: below currently overlaps. would like to hide native player controls
+                bundle them with this bar, and add a delay to auto-hide the whole thing -->
+                <Grid
+                    Grid.Row="0"
+                    Grid.RowSpan="3" 
+                    Style="{StaticResource HeaderStyle}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition
+                            Width="*" />
+                        <ColumnDefinition
+                            Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <BoxView Opacity="0.4"
+                             Grid.ColumnSpan="2"
+                             VerticalOptions="Fill"
+                             HorizontalOptions="Fill"
+                             BackgroundColor="{StaticResource BlackColor}"/>
+                    <Label
+                        Grid.Column="0"
+                        Text="{Binding Video.Title}"
+                        Style="{StaticResource TitleStyle}" />
+                    <ImageButton
+                        Grid.Column="1"
+                        Command="{Binding CloseCommand}"
+                        Source="{StaticResource IconWindowClose}"
+                        Style="{StaticResource CloseButtonStyle}" />
+                </Grid>
+            </Grid>
+        </Frame>
+    </ContentView.Content>
+</ContentView>

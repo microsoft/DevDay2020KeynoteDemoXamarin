@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns:local="clr-namespace:XamarinTV.Views"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    x:Class="XamarinTV.Views.MainPage"
+    Visual="Material">
+    <local:CustomTwoPaneView
+        IsLandscape="{Binding IsLandscape, Mode=OneWayToSource}"
+        Mode="{Binding TwoPaneViewMode, Mode=OneWayToSource}"
+        TallModeConfiguration="{Binding TallModeConfiguration}"
+        WideModeConfiguration="{Binding WideModeConfiguration}">
+        <local:CustomTwoPaneView.Pane1>
+            <local:AnimationView
+                ViewToAnimateIn="{Binding Pane1, Converter={StaticResource ViewModelToViewConverter}}"></local:AnimationView>
+        </local:CustomTwoPaneView.Pane1>
+        <local:CustomTwoPaneView.Pane2>
+            <local:AnimationView
+                ViewToAnimateIn="{Binding Pane2, Converter={StaticResource ViewModelToViewConverter}}"></local:AnimationView>
+        </local:CustomTwoPaneView.Pane2>
+    </local:CustomTwoPaneView>
+</ContentPage>
