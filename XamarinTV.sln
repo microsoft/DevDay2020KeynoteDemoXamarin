@@ -7,9 +7,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamarinTV", "XamarinTV\XamarinTV.csproj", "{2BA185EB-4447-4867-BE4F-B27E15184AFF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9169623A-1495-4624-BD09-30675B01FB74}"
-	ProjectSection(SolutionItems) = preProject
-		README.txt = README.txt
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinTV.UWP", "XamarinTV.UWP\XamarinTV.UWP.csproj", "{87672212-2BA2-4636-9360-E231F31FC5F5}"
 EndProject

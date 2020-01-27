@@ -16,6 +16,7 @@ namespace XamarinTV.ViewModels
 
         public SettingsViewModel()
         {
+            LoadThemesSettings();
             LoadOpenSourceList();
         }
 
@@ -53,6 +54,11 @@ namespace XamarinTV.ViewModels
             IsDarkMode = true;
             Application.Current.Resources = new DarkTheme();
             App.AppTheme = "dark";
+        }
+
+        void LoadThemesSettings()
+        {
+            IsDarkMode = true;
         }
 
         void LoadOpenSourceList()

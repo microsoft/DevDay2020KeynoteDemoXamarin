@@ -33,7 +33,7 @@ namespace XamarinTV.ViewModels
 
         async void LoadTopVideosAsync()
         {
-            var topVideos = await XamarinTvService.Instance.GetPopularAsync();
+            var topVideos = await FakeXamarinTvService.Instance.GetPopularAsync();
 
             TopVideos = new ObservableCollection<VideoCarouselItem>();
 

@@ -24,7 +24,7 @@ namespace XamarinTV.ViewModels
         {
             IsBusy = true;
 
-            var videos = await XamarinTvService.Instance.GetPopularAsync();
+            var videos = await FakeXamarinTvService.Instance.GetPopularAsync();
             Videos = new ObservableCollection<Video>(videos);
 
             IsBusy = false;

@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="XamarinTV.Views.AnimationView">
   <ContentView.Content>
-      <Grid x:Name="gridView">          
-      </Grid>
-  </ContentView.Content>
+      <Grid
+          x:Name="GridView" />
+    </ContentView.Content>
 </ContentView>

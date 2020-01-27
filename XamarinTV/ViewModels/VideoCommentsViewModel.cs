@@ -24,7 +24,7 @@ namespace XamarinTV.ViewModels
         {
             IsBusy = true;
 
-            var comments = await XamarinTvService.Instance.GetVideoCommentsAsync(1);
+            var comments = await FakeXamarinTvService.Instance.GetVideoCommentsAsync(1);
             Comments = new ObservableCollection<VideoComment>(comments);
 
             IsBusy = false;

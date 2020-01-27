@@ -31,8 +31,8 @@ namespace XamarinTV.ViewModels
         {
             IsBusy = true;
 
-            var recentSearches = await XamarinTvService.Instance.GetRecentSearchesAsync();
-            var mostSearchedVideos = await XamarinTvService.Instance.GetVideosAsync();
+            var recentSearches = await FakeXamarinTvService.Instance.GetRecentSearchesAsync();
+            var mostSearchedVideos = await FakeXamarinTvService.Instance.GetVideosAsync();
 
             RecentSearches = new ObservableCollection<string>();
             MostSearchedVideos = new ObservableCollection<Video>();

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using XamarinTV.Models;
 using XamarinTV.Services;
@@ -8,11 +9,12 @@ namespace XamarinTV.ViewModels
 {
     public class FeaturedVideosViewModel : BaseViewModel
     {
+        static bool _isFirstLoaded;
         ObservableCollection<VideoGroup> _videos;
 
         public FeaturedVideosViewModel()
         {
-            LoadVideoGroupsAsync();
+            LoadFeaturedVideosAsync();
         }
 
         public ObservableCollection<VideoGroup> Videos
@@ -21,11 +23,12 @@ namespace XamarinTV.ViewModels
             set { SetProperty(ref _videos, value); }
         }
 
-        async void LoadVideoGroupsAsync()
+        public async void LoadFeaturedVideosAsync()
         {
-            IsBusy = true;
+            if (!_isFirstLoaded)
+                IsBusy = true;
 
-            var videoGroups = await XamarinTvService.Instance.GetVideoGroupsAsync();
+            var videoGroups = FakeXamarinTvService.Instance.GetVideoGroups();
 
             Videos = new ObservableCollection<VideoGroup>();
 
@@ -34,9 +37,20 @@ namespace XamarinTV.ViewModels
                 Videos.Add(videoGroup);
             }
 
-            await Task.Delay(3000);
+            if (!_isFirstLoaded)
+            {
+                await Task.Delay(GetRandomLoadingTime());
 
-            IsBusy = false;
+                IsBusy = false;
+            }
+
+            _isFirstLoaded = true;
+        }
+
+        int GetRandomLoadingTime()
+        {
+            var random = new Random();
+            return random.Next(3000, 5000);
         }
     }
 }

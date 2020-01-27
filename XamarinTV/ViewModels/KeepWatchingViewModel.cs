@@ -25,7 +25,7 @@ namespace XamarinTV.ViewModels
         {
             IsBusy = true;
 
-            var videos = await XamarinTvService.Instance.GetLatestAsync();
+            var videos = await FakeXamarinTvService.Instance.GetLatestAsync();
             Videos = new ObservableCollection<SavedVideo>();
 
             foreach (var video in videos)
