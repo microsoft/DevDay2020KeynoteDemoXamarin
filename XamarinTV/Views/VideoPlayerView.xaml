@@ -64,6 +64,9 @@
                 <Setter
                     Property="VerticalOptions"
                     Value="FillAndExpand" />
+                <Setter
+                    Property="VideoAspect"
+                    Value="AspectFit" />
             </Style>
 
             <Style
@@ -86,7 +89,8 @@
         <viewmodels:VideoPlayerViewModel />
     </ContentView.BindingContext>
     <ContentView.Content>
-        <Frame HeightRequest="300"
+        <Frame
+            HeightRequest="300"
             BackgroundColor="Black"
             CornerRadius="0">
             <Grid
@@ -99,15 +103,15 @@
                     <RowDefinition
                         Height="*" />
                 </Grid.RowDefinitions>
-                <mediamanager:VideoView 
+                <mediamanager:VideoView
                     Grid.Row="1"
                     x:Name="VideoView"
-                    Style="{StaticResource VideoPlayerStyle}"/>
+                    Style="{StaticResource VideoPlayerStyle}" />
                 <!-- TODO: below currently overlaps. would like to hide native player controls
                 bundle them with this bar, and add a delay to auto-hide the whole thing -->
                 <Grid
                     Grid.Row="0"
-                    Grid.RowSpan="3" 
+                    Grid.RowSpan="3"
                     Style="{StaticResource HeaderStyle}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition
@@ -115,11 +119,12 @@
                         <ColumnDefinition
                             Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <BoxView Opacity="0.4"
-                             Grid.ColumnSpan="2"
-                             VerticalOptions="Fill"
-                             HorizontalOptions="Fill"
-                             BackgroundColor="{StaticResource BlackColor}"/>
+                    <BoxView
+                        Opacity="0.4"
+                        Grid.ColumnSpan="2"
+                        VerticalOptions="Fill"
+                        HorizontalOptions="Fill"
+                        BackgroundColor="{StaticResource BlackColor}" />
                     <Label
                         Grid.Column="0"
                         Text="{Binding Video.Title}"
