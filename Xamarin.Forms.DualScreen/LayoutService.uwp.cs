@@ -7,9 +7,9 @@ using Xamarin.Forms.DualScreen;
 [assembly: Dependency(typeof(LayoutService))]
 namespace Xamarin.Forms.DualScreen
 {
-    public class LayoutService : LayoutServiceBase, ILayoutService
+    public class LayoutService : ILayoutService
     {
-        public override Point? GetLocationOnScreen(VisualElement visualElement)
+        public Point? GetLocationOnScreen(VisualElement visualElement)
         {
             var view = Platform.UWP.Platform.GetRenderer(visualElement);
 

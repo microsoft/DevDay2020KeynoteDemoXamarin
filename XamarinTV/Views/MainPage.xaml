@@ -11,8 +11,6 @@
     Visual="Material">
     <dualScreen:TwoPaneView
         IsLandscape="{Binding IsLandscape, Mode=OneWayToSource}"
-        Pane1Length="0"
-        Pane2Length="*"
         MinTallModeHeight="4000"
         MinWideModeWidth="4000"
         Mode="{Binding TwoPaneViewMode, Mode=OneWayToSource}"

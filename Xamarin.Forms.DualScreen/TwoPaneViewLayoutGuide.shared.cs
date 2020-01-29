@@ -21,159 +21,47 @@ namespace Xamarin.Forms.DualScreen
         bool isLandscape;
         bool isPortrait;
         Rectangle containerArea;
-        Page _mainPage;
         Layout _layout;
-        VisualStateGroupList _visualStateGroups;
 
-        public TwoPaneViewLayoutGuide(ContentPage contentPage) : this (contentPage, null)
+        public TwoPaneViewLayoutGuide()
         {
+
         }
 
-        public TwoPaneViewLayoutGuide(ContentPage contentPage, Layout layout)
+        public TwoPaneViewLayoutGuide(Layout layout)
         {
             _layout = layout;
-            _mainPage = contentPage;
-
-            if (_mainPage != null)
-            {
-                _mainPage.Appearing += OnPageAppearing;
-                _mainPage.Disappearing += OnPageDisappearing;
-                _mainPage.LayoutChanged += OnMainPageLayoutChanged;
-            }
-
-            LayoutService.LayoutGuideChanged += OnLayoutGuideChanged;
             HingeService.OnHingeUpdated += OnHingeUpdated;
 
             if (_layout != null)
             {
-                _layout.SizeChanged += OnMainPageLayoutChanged;
+                _layout.SizeChanged += OnLayoutChanged;
             }
-
-            _visualStateGroups = new VisualStateGroupList();
         }
 
-        void OnMainPageLayoutChanged(object sender, EventArgs e)
+        void OnLayoutChanged(object sender, EventArgs e)
         {
             UpdateLayouts();
         }
 
         void OnHingeUpdated(object sender, HingeEventArgs e)
         {
+            Hinge = HingeService.GetHinge();
             UpdateLayouts();
-        }
-
-        void OnPageDisappearing(object sender, EventArgs e)
-        {
-            LayoutService.LayoutGuideChanged -= OnLayoutGuideChanged;
-            HingeService.OnHingeUpdated -= OnHingeUpdated;
-            _mainPage.LayoutChanged -= OnMainPageLayoutChanged;
-
-            if (_layout != null)
-                _layout.LayoutChanged -= OnMainPageLayoutChanged;
-        }
-
-        void OnPageAppearing(object sender, EventArgs e)
-        {
-            LayoutService.LayoutGuideChanged -= OnLayoutGuideChanged;
-            LayoutService.LayoutGuideChanged += OnLayoutGuideChanged;
-
-            HingeService.OnHingeUpdated -= OnHingeUpdated; 
-            HingeService.OnHingeUpdated += OnHingeUpdated;
-
-            if (_mainPage != null)
-            {
-                _mainPage.LayoutChanged -= OnMainPageLayoutChanged;
-                _mainPage.LayoutChanged += OnMainPageLayoutChanged;
-            }
-
-            if(_layout != null)
-            {
-                _layout.LayoutChanged -= OnMainPageLayoutChanged;
-                _layout.LayoutChanged += OnMainPageLayoutChanged;
-
-            }
-
-            Device.BeginInvokeOnMainThread(() => UpdateLayouts());
-        }
-
-        Page GetDisplayedPage(Page rootPage)
-        {
-            if (rootPage == null)
-                return null;
-
-            if (rootPage is Shell shell)
-            {
-                if (shell?.CurrentItem?.CurrentItem is IShellSectionController shellSectionController)
-                    return shellSectionController.PresentedPage;
-
-                return null;
-            }
-
-            if (rootPage is ContentPage contentPage)
-            {
-                return contentPage;
-            }
-
-            if (rootPage is TabbedPage tabbedPage)
-            {
-                return tabbedPage.CurrentPage;
-            }
-
-            if (rootPage is NavigationPage navigationPage)
-            {
-                return navigationPage.CurrentPage;
-            }
-
-            if (rootPage is MasterDetailPage mdp)
-            {
-                return GetDisplayedPage(mdp.Detail);
-            }
-
-            throw new Exception($"Unaccounted for Page Type {rootPage}");
-        }
-
-        Rectangle GetContainerArea(Page rootPage)
-        {
-            Rectangle returnValue = Rectangle.Zero;
-            if (rootPage is ContentPage contentPage)
-            {
-                var bounds = contentPage.Bounds;
-                returnValue = new Rectangle(0, 0, contentPage.Width, contentPage.Height);
-            }
-
-            if (returnValue == Rectangle.Zero)
-                returnValue = (rootPage as IPageController).ContainerArea;
-
-            if (returnValue == Rectangle.Zero)
-            {
-                var displayedPage = GetDisplayedPage(rootPage);
-
-                if (displayedPage != null)
-                {
-                    returnValue = (displayedPage as IPageController).ContainerArea;
-                    if (returnValue == Rectangle.Zero && displayedPage.Width > 0)
-                    {
-                        returnValue = new Rectangle(0, 0, displayedPage.Width, displayedPage.Height);
-                    }
-                }
-            }
-
-            return returnValue;
         }
 
         internal void UpdateLayouts()
         {
-            var displayedPage = _layout ?? (VisualElement)GetDisplayedPage(_mainPage);
-
-            if (displayedPage == null)
-                return;
-
             Rectangle containerArea;
 
-            if (_layout != null)
-                containerArea = _layout.Bounds;
+            if (_layout == null)
+            {
+                containerArea = new Rectangle(Point.Zero, Device.info.ScaledScreenSize);
+            }
             else
-                containerArea = GetContainerArea(_mainPage);
+            {
+                containerArea = _layout.Bounds;
+            }
 
             if (containerArea.Width <= 0)
             {
@@ -202,7 +90,11 @@ namespace Xamarin.Forms.DualScreen
             }
             else
             {
-                var displayedScreenAbsCoordinates = LayoutService.GetLocationOnScreen(displayedPage) ?? Point.Zero;
+                Point displayedScreenAbsCoordinates = Point.Zero;
+
+                if (_layout != null)
+                    displayedScreenAbsCoordinates = LayoutService.GetLocationOnScreen(_layout) ?? Point.Zero;
+
                 if (HingeService.IsSpanned)
                 {
                     var screenSize = Device.info.ScaledScreenSize;
@@ -221,14 +113,6 @@ namespace Xamarin.Forms.DualScreen
                     Pane2 = Rectangle.Zero;
                 }
             }
-        }
-
-        void OnLayoutGuideChanged(object sender, LayoutGuideChangedArgs e)
-        {
-            if (e.LayoutGuide.Name == "Hinge")
-                Hinge = e.LayoutGuide.Rectangle;
-            else if (e.LayoutGuide.Name == "Toolbar")
-                Toolbar = e.LayoutGuide.Rectangle;
         }
 
         public bool IsPortrait

@@ -44,10 +44,13 @@ namespace Xamarin.Forms.DualScreen
             None
         };
 
-        TwoPaneViewLayoutGuide _ScreenViewModel;
+        TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
         VisualStateGroup _modeStates;
         ContentView _content1;
         ContentView _content2;
+        ViewMode _currentMode;
+        bool _hasMeasured = false;
+        bool _updatingMode = false;
 
         public static readonly BindableProperty TallModeConfigurationProperty
             = BindableProperty.Create("TallModeConfiguration", typeof(TwoPaneViewTallModeConfiguration), typeof(TwoPaneView), defaultValue: TwoPaneViewTallModeConfiguration.SinglePane, propertyChanged: OnJustInvalidateLayout);
@@ -200,33 +203,33 @@ namespace Xamarin.Forms.DualScreen
             this.ColumnDefinitions = new ColumnDefinitionCollection() { new ColumnDefinition(), new ColumnDefinition(), new ColumnDefinition() };
         }
 
-        TwoPaneViewLayoutGuide CurrentFormsWindow
+        TwoPaneViewLayoutGuide TwoPaneViewLayoutGuide
         {
             get
             {
-                if (_ScreenViewModel == null)
+                if (_twoPaneViewLayoutGuide == null)
                 {
-                    _ScreenViewModel = new TwoPaneViewLayoutGuide(null, this);
-                    _ScreenViewModel.PropertyChanged += OnScreenViewModelChanged;
+                    _twoPaneViewLayoutGuide = new TwoPaneViewLayoutGuide(this);
+                    _twoPaneViewLayoutGuide.PropertyChanged += OnTwoPaneViewLayoutGuide;
                 }
 
-                return _ScreenViewModel;
+                return _twoPaneViewLayoutGuide;
             }
         }
 
-        void OnScreenViewModelChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        void OnTwoPaneViewLayoutGuide(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(TwoPaneViewLayoutGuide.IsLandscape) || e.PropertyName == nameof(TwoPaneViewLayoutGuide.IsSpanned))
+            if (e.PropertyName == nameof(DualScreen.TwoPaneViewLayoutGuide.IsLandscape) || e.PropertyName == nameof(DualScreen.TwoPaneViewLayoutGuide.IsSpanned))
             {
-                if (!CurrentFormsWindow.IsSpanned)
+                if (!TwoPaneViewLayoutGuide.IsSpanned)
                 {
                     SetValue(ModePropertyKey, TwoPaneViewMode.SinglePane);
                 }
-                else if (CurrentFormsWindow.IsLandscape)
+                else if (TwoPaneViewLayoutGuide.IsLandscape)
                 {
                     SetValue(ModePropertyKey, TwoPaneViewMode.Tall);
                 }
-                else if (CurrentFormsWindow.IsPortrait)
+                else if (TwoPaneViewLayoutGuide.IsPortrait)
                 {
                     SetValue(ModePropertyKey, TwoPaneViewMode.Wide);
                 }
@@ -240,109 +243,13 @@ namespace Xamarin.Forms.DualScreen
 
         public bool IsLandscape { get => (bool)GetValue(IsLandscapeProperty); }
 
-        public bool IsPortrait
-            => !IsLandscape;
+        public bool IsPortrait => !IsLandscape;
 
-        public bool IsSpanned
-            => CurrentFormsWindow.IsSpanned;
+        public bool IsSpanned => TwoPaneViewLayoutGuide.IsSpanned;
 
         bool _performingLayout = false;
         protected override void LayoutChildren(double x, double y, double width, double height)
         {
-            //_performingLayout = true;
-            //try
-            //{
-            //    var primary = Pane1?.Parent as View;
-            //    var secondary = Pane2?.Parent as View;
-
-            //    if (PanePriority == TwoPaneViewPriority.Pane2 &&
-            //        secondary != null &&
-            //        !IsSpanned)
-            //    {
-            //        var temp = primary;
-            //        primary = secondary;
-            //        secondary = temp;
-            //    }
-
-            //    if (primary == null)
-            //        return;
-
-            //    var formsWindows = CurrentFormsWindow;
-            //    formsWindows.UpdateLayouts();
-
-            //    //var pane1 = formsWindows.Pane1;
-            //    //var pane2 = formsWindows.Pane2;
-
-            //    //Rectangle pane1ViewRect = Rectangle.Zero;
-            //    //Rectangle pane2ViewRect = Rectangle.Zero;
-
-            //    //if (!formsWindows.IsSpanned)
-            //    //{
-            //    //    pane1ViewRect = pane1;
-            //    //    pane2ViewRect = pane2;
-            //    //}
-            //    //else if (formsWindows.IsPortrait)
-            //    //{
-            //    //    if (WideModeConfiguration == TwoPaneViewWideModeConfiguration.LeftRight)
-            //    //    {
-            //    //        pane1ViewRect = pane1;
-            //    //        pane2ViewRect = pane2;
-            //    //    }
-            //    //    else if (WideModeConfiguration == TwoPaneViewWideModeConfiguration.RightLeft)
-            //    //    {
-            //    //        pane1ViewRect = pane2;
-            //    //        pane2ViewRect = pane1;
-            //    //    }
-            //    //    else if (WideModeConfiguration == TwoPaneViewWideModeConfiguration.SinglePane)
-            //    //    {
-            //    //        pane1ViewRect = formsWindows.ContainerArea;
-            //    //    }
-            //    //}
-            //    //else
-            //    //{
-            //    //    if (TallModeConfiguration == TwoPaneViewTallModeConfiguration.TopBottom)
-            //    //    {
-            //    //        pane1ViewRect = pane1;
-            //    //        pane2ViewRect = pane2;
-            //    //    }
-            //    //    else if (TallModeConfiguration == TwoPaneViewTallModeConfiguration.BottomTop)
-            //    //    {
-            //    //        pane1ViewRect = pane2;
-            //    //        pane2ViewRect = pane1;
-            //    //    }
-            //    //    else if (TallModeConfiguration == TwoPaneViewTallModeConfiguration.SinglePane)
-            //    //    {
-            //    //        pane1ViewRect = formsWindows.ContainerArea;
-            //    //    }
-            //    //}
-
-
-            //    //primary.IsVisible = pane1ViewRect != Rectangle.Zero;
-
-            //    //if (secondary != null)
-            //    //    secondary.IsVisible = pane2ViewRect != Rectangle.Zero;
-
-            //    //if (primary.Bounds != pane1ViewRect)
-            //    //{
-            //    //    LayoutChildIntoBoundingRegion(primary, pane1ViewRect);
-            //    //}
-
-            //    //if (secondary != null && secondary.Bounds != pane2ViewRect)
-            //    //{
-            //    //    LayoutChildIntoBoundingRegion(secondary, pane2ViewRect);
-            //    //}
-
-            //    SetValue(IsLandscapePropertyKey, formsWindows.IsLandscape);
-            //    OnPropertyChanged(nameof(IsLandscape));
-            //    OnPropertyChanged(nameof(IsPortrait));
-            //    OnPropertyChanged(nameof(IsDualView));
-            //    OnPropertyChanged(nameof(IsSpanned));
-            //}
-            //finally
-            //{
-            //    _performingLayout = false;
-            //}
-
             if (_updatingMode)
                 return;
 
@@ -352,21 +259,6 @@ namespace Xamarin.Forms.DualScreen
                 UpdateMode();
         }
 
-        protected override void InvalidateLayout()
-        {
-            base.InvalidateLayout();
-        }
-
-        protected override void InvalidateMeasure()
-        {
-            base.InvalidateMeasure();
-        }
-
-
-
-        ViewMode _currentMode;
-        bool _hasMeasured = false;
-        bool _updatingMode = false;
 
         void UpdateMode()
         {
@@ -386,7 +278,7 @@ namespace Xamarin.Forms.DualScreen
 
                 _hasMeasured = true;
 
-                this.CurrentFormsWindow.UpdateLayouts();
+                this.TwoPaneViewLayoutGuide.UpdateLayouts();
                 if (!IsSet(MinTallModeHeightProperty))
                 {
                     // This is the value UWP picks to switch between compact mode
@@ -510,9 +402,9 @@ namespace Xamarin.Forms.DualScreen
             // Handle regions
             if (IsSpanned && newMode != ViewMode.Pane1Only && newMode != ViewMode.Pane2Only)
             {
-                Rectangle rc1 = _ScreenViewModel.Pane1;
-                Rectangle rc2 = _ScreenViewModel.Pane2;
-                Rectangle hinge = _ScreenViewModel.Hinge;
+                Rectangle rc1 = _twoPaneViewLayoutGuide.Pane1;
+                Rectangle rc2 = _twoPaneViewLayoutGuide.Pane2;
+                Rectangle hinge = _twoPaneViewLayoutGuide.Hinge;
 
                 if (Mode == TwoPaneViewMode.Wide)
                 {
