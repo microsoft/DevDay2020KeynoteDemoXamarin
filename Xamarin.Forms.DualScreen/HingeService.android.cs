@@ -75,7 +75,6 @@ namespace Xamarin.Forms.DualScreen
 			if (_hingeLocation != GetHinge())
 			{
 				_hingeLocation = GetHinge();
-				LayoutService.AddLayoutGuide("Hinge", _hingeLocation);
 			}
 
 			if (_hingeAngle != e.HingeAngle)

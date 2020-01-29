@@ -133,11 +133,6 @@
                         Style="{StaticResource TitleStyle}" />
                     <ImageButton
                         Grid.Column="1"
-                        Command="{Binding OpenNewWindowCommand}"
-                        Source="{StaticResource IconWindowOpenNew}"
-                        Style="{StaticResource OpenNewWindowButtonStyle}" />
-                    <ImageButton
-                        Grid.Column="2"
                         Command="{Binding CloseCommand}"
                         Source="{StaticResource IconWindowClose}"
                         Style="{StaticResource CloseButtonStyle}" />

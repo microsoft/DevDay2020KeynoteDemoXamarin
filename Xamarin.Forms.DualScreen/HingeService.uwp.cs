@@ -21,7 +21,6 @@ namespace Xamarin.Forms.DualScreen
 
         void FireOnHingeUpdate()
         {
-            LayoutService.AddLayoutGuide("Hinge", GetHinge());
             OnHingeUpdated?.Invoke(this, new HingeEventArgs(-1));
         }
 
