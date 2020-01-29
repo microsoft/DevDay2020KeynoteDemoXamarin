@@ -8,7 +8,6 @@
     BackgroundColor="{DynamicResource BackgroundColor}">
     <ContentView.Resources>
         <ResourceDictionary>
-
             <Style
                 TargetType="tabs:UnderlinedTabItem">
                 <Setter
@@ -27,7 +26,6 @@
                     Property="Margin"
                     Value="12, 0" />
             </Style>
-
             <Style
                 x:Key="SettingsButtonStyle"
                 TargetType="ImageButton">
@@ -42,26 +40,15 @@
         </ResourceDictionary>
     </ContentView.Resources>
     <ContentView.Content>
-        <Grid
-            RowSpacing="0">
+        <Grid RowSpacing="0">
             <Grid.RowDefinitions>
-                <RowDefinition
-                    x:Name="ContentRow"
-                    Height="Auto" />
                 <RowDefinition
                     Height="{StaticResource TopBarHeight}" />
                 <RowDefinition
                     Height="3*" />
             </Grid.RowDefinitions>
-            <ContentView
-                Grid.Row="0"
-                x:Name="ContentView"
-                BindingContextChanged="OnContentViewBindingContextChanged"
-                BindingContext="{Binding TopViewModel}"
-                Content="{Binding ., Converter={StaticResource ViewModelToViewConverter}}" />
-            <!-- RELATED VIDEO CONTENT -->
             <tabs:TabHostView
-                Grid.Row="1"
+                Grid.Row="0"
                 BackgroundColor="{StaticResource BlackColor}"
                 ShadowType="Bottom"
                 TabType="Scrollable"
@@ -76,7 +63,7 @@
                 </tabs:TabHostView.Tabs>
             </tabs:TabHostView>
             <tabs:ViewSwitcher
-                Grid.Row="2"
+                Grid.Row="1"
                 x:Name="Switcher"
                 Animate="True"
                 SelectedIndex="{Binding SelectedViewModelIndex, Mode=TwoWay}">

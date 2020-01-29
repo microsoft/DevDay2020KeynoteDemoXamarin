@@ -34,17 +34,11 @@
         <Grid
             RowSpacing="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="2*" />
                 <RowDefinition Height="{StaticResource TopBarHeight}" />
                 <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
-            <!-- TOP VIDEOS -->
-            <ContentView
-                Grid.Row="0"
-                Content="{Binding TopViewModel, Converter={StaticResource ViewModelToViewConverter}}" />
-            <!-- BROWSE VIDEOS -->
             <Grid
-                Grid.Row="1"
+                Grid.Row="0"
                 BackgroundColor="{StaticResource BlackColor}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -93,7 +87,7 @@
                 </Image>
             </Grid>
             <tabs:ViewSwitcher
-                Grid.Row="2"
+                Grid.Row="1"
                 x:Name="Switcher"
                 Animate="True"
                 SelectedIndex="{Binding SelectedViewModelIndex, Mode=TwoWay}">

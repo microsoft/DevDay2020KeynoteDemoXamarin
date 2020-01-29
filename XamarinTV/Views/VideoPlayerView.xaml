@@ -82,12 +82,8 @@
                     Property="Margin"
                     Value="0,0,10,0" />
             </Style>
-
         </ResourceDictionary>
     </ContentView.Resources>
-    <ContentView.BindingContext>
-        <viewmodels:VideoPlayerViewModel />
-    </ContentView.BindingContext>
     <ContentView.Content>
         <Frame
             HeightRequest="300"

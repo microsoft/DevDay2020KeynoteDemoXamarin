@@ -32,9 +32,10 @@ namespace XamarinTV.ViewModels
         TwoPaneViewTallModeConfiguration _tallModeConfiguration;
         TwoPaneViewWideModeConfiguration _wideModeConfiguration;
         TwoPaneViewMode _twoPaneViewMode;
-        bool _isLandscape;
-
-
+        double minWideModeWidth;
+        double minTallModeHeight;
+        private GridLength pane1Length;
+        private GridLength pane2Length;
 
         public Command<Video> PlayVideoCommand { get; }
         public Command OpenSettingWindowCommand { get; }
@@ -90,111 +91,66 @@ namespace XamarinTV.ViewModels
             get => _wideModeConfiguration;
             set => SetProperty(ref _wideModeConfiguration, value);
         }
-        
+
         public TwoPaneViewMode TwoPaneViewMode
         {
             get => _twoPaneViewMode;
             set
             {
-                if(SetProperty(ref _twoPaneViewMode, value))
+                if (SetProperty(ref _twoPaneViewMode, value))
                 {
                     UpdateLayouts();
                 }
             }
         }
 
-        //public bool IsLandscape
-        //{
-        //    private get => _isLandscape;
-        //    set
-        //    {
-        //        if (SetProperty(ref _isLandscape, value))
-        //        {
-        //            UpdateLayouts();
-        //        }
-        //    }
-        //}
+        public double MinWideModeWidth
+        {
+            get => minWideModeWidth;
+            set => SetProperty(ref minWideModeWidth, value);
+        }
+
+        public double MinTallModeHeight
+        {
+            get => minTallModeHeight;
+            set => SetProperty(ref minTallModeHeight, value);
+        }
+
+        public GridLength Pane1Length
+        {
+            get => pane1Length;
+            set => SetProperty(ref pane1Length, value);
+        }
+
+        public GridLength Pane2Length
+        {
+            get => pane2Length;
+            set => SetProperty(ref pane2Length, value);
+        }
 
         void UpdateLayouts()
         {
-            //if (VideoPlayerViewModel.Video != null)
-            //{
-            //    if (TwoPaneViewMode == TwoPaneViewMode.SinglePane)
-            //        VideoDetailViewModel.TopViewModel = VideoPlayerViewModel;
-            //    else
-            //        VideoDetailViewModel.TopViewModel = null;
-
-            //    BrowseVideosViewModel.TopViewModel = null;
-            //}
-            //else
-            //{
-            //    BrowseVideosViewModel.TopViewModel = TopVideosViewModel;
-            //    VideoDetailViewModel.TopViewModel = null;
-            //}
-
+            Pane2Length = GridLength.Star;
             if (VideoPlayerViewModel.Video != null)
             {
+                MinTallModeHeight = 600;
+                MinWideModeWidth = 4000;
+                Pane1Length = GridLength.Auto;
                 Pane1 = VideoPlayerViewModel;
                 Pane2 = VideoDetailViewModel;
-                TallModeConfiguration = TwoPaneViewTallModeConfiguration.BottomTop;
-                WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;                
+                TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
+                WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
             }
             else
             {
+                Pane1Length = new GridLength(2, GridUnitType.Star);
+                MinTallModeHeight = 0;
+                MinWideModeWidth = 4000;
                 Pane1 = TopVideosViewModel;
                 Pane2 = BrowseVideosViewModel;
                 TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
                 WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
             }
-
-            //if (Pane2 == null)
-            //{
-            //    TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
-            //    WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
-            //}
-            //else
-            //{
-            //    TallModeConfiguration = TwoPaneViewTallModeConfiguration.BottomTop;
-            //    WideModeConfiguration = TwoPaneViewWideModeConfiguration.RightLeft;
-            //}
-
-            //if (TwoPaneViewMode == TwoPaneViewMode.SinglePane)
-            //{
-            //    Pane2 = null;
-            //    if (VideoPlayerViewModel.Video != null)
-            //    {
-            //        Pane1 = VideoPlayerViewModel;
-            //        Pane2 = VideoDetailViewModel;
-            //    }
-            //    else
-            //    {
-            //        Pane1 = BrowseVideosViewModel;
-            //    }
-            //}
-            //else
-            //{
-            //    if (VideoPlayerViewModel.Video != null)
-            //    {
-            //        Pane1 = VideoDetailViewModel;
-            //        Pane2 = VideoPlayerViewModel;
-            //    }
-            //    else
-            //    {
-            //        Pane1 = SearchVideosViewModel;
-            //        Pane2 = BrowseVideosViewModel;
-            //    }
-            //}
-
-            //if (Pane2 == null)
-            //{
-            //    TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
-            //    WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
-            //}
-            //else
-            //{
-            //    TallModeConfiguration = TwoPaneViewTallModeConfiguration.BottomTop;
-            //    WideModeConfiguration = TwoPaneViewWideModeConfiguration.RightLeft;
-            //}
         }
 
         public override void OnFirstAppearing()
@@ -248,7 +204,7 @@ namespace XamarinTV.ViewModels
 
             UpdateLayouts();
         }
-        
+
         async void OnPlayVideo(Video video)
         {
             VideoPlayerViewModel.Video = video;
@@ -267,7 +223,7 @@ namespace XamarinTV.ViewModels
 
         public async void OpenSettingWindow()
         {
-            if(!WindowHelper.HasCompactModeSupport())
+            if (!WindowHelper.HasCompactModeSupport())
             {
                 if (SettingsViewModel.CloseCommand == null)
                     SettingsViewModel.CloseCommand = new Command(() => UpdateLayouts());

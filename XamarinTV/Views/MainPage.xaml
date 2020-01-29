@@ -10,8 +10,10 @@
     x:Class="XamarinTV.Views.MainPage"
     Visual="Material">
     <dualScreen:TwoPaneView
-        MinTallModeHeight="0"
-        MinWideModeWidth="4000"        
+        Pane1Length="{Binding Pane1Length}"
+        Pane2Length="{Binding Pane2Length}"
+        MinTallModeHeight="{Binding MinTallModeHeight}"
+        MinWideModeWidth="{Binding MinWideModeWidth}"        
         Mode="{Binding TwoPaneViewMode, Mode=OneWayToSource}"
         TallModeConfiguration="{Binding TallModeConfiguration}"
         WideModeConfiguration="{Binding WideModeConfiguration}">
