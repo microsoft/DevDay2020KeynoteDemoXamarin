@@ -41,7 +41,7 @@
     </ProjectReference>-->
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.6.0.191-nightly" />
+    <PackageReference Include="Xamarin.Forms" Version="4.6.0.198-nightly" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('MonoAndroid')) ">
     <Compile Include="**\*.android.cs" />
