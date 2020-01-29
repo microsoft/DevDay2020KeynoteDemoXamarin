@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Xamarin.Forms;
 
-namespace XamarinTV.Services
+namespace Xamarin.Forms.DualScreen
 {
     public interface ILayoutService
 	{

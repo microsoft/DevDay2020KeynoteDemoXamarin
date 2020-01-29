@@ -4,8 +4,8 @@ using Android.Runtime;
 using Android.OS;
 using Xamarin.Forms;
 using FFImageLoading.Forms.Platform;
-using XamarinTV.Android.Services;
 using MediaManager;
+using Xamarin.Forms.DualScreen;
 
 namespace XamarinTV.Droid
 {
@@ -27,7 +27,7 @@ namespace XamarinTV.Droid
             base.OnCreate(savedInstanceState);
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            Forms.SetFlags("IndicatorView_Experimental");
+            Forms.SetFlags("IndicatorView_Experimental", "CarouselView_Experimental");
             Forms.Init(this, savedInstanceState); 
             CachedImageRenderer.Init(true);
             CrossMediaManager.Current.Init(this);

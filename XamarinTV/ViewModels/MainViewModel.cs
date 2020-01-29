@@ -4,6 +4,7 @@ using XamarinTV.ViewModels.Base;
 using XamarinTV.Views;
 using System;
 using Xamarin.Forms;
+using Xamarin.Forms.DualScreen;
 
 namespace XamarinTV.ViewModels
 {

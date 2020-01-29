@@ -86,13 +86,14 @@
       <Version>0.9.6</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.MediaRouter" Version="1.1.0-rc1" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.1.0-rc1" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.0.0-rc1" />
+    <PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4" Version="1.0.0-rc1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\LayoutService.cs" />
-    <Compile Include="Services\HingeService.cs" />
     <Compile Include="Effects\TouchEffect.cs" />
     <Compile Include="SplashActivity.cs" />
   </ItemGroup>
@@ -550,6 +551,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\Xamarin.Forms.DualScreen\Xamarin.Forms.DualScreen.csproj">
+      <Project>{d72d4d6d-c806-41c9-9976-644147474016}</Project>
+      <Name>Xamarin.Forms.DualScreen</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XamarinTV\XamarinTV.csproj">
       <Project>{2BA185EB-4447-4867-BE4F-B27E15184AFF}</Project>
       <Name>XamarinTV</Name>

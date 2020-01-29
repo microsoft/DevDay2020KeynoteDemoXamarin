@@ -1,16 +1,15 @@
-﻿using XamarinTV.Android.Services;
-using XamarinTV.Services;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
+using Xamarin.Forms.DualScreen;
 
 [assembly: Dependency(typeof(LayoutService))]
-namespace XamarinTV.Android.Services
+namespace Xamarin.Forms.DualScreen
 {
     public class LayoutService : LayoutServiceBase, ILayoutService
     {
         public override Point? GetLocationOnScreen(VisualElement visualElement)
         {
-            var view = Platform.GetRenderer(visualElement);
+            var view = Platform.Android.Platform.GetRenderer(visualElement);
 
             if (view?.View == null)
                 return null;

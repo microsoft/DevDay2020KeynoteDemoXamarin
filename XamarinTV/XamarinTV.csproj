@@ -41,6 +41,10 @@
   <ItemGroup>
     <Compile Remove="ViewModels\VideoPlayerView.xaml.cs" />
   </ItemGroup>
+    
+  <ItemGroup>
+    <ProjectReference Include="..\Xamarin.Forms.DualScreen\Xamarin.Forms.DualScreen.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Update="Views\VideoDetailView.xaml.cs">
       <DependentUpon>VideoDetailView.xaml</DependentUpon>

@@ -3,16 +3,9 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace XamarinTV.Services
+namespace Xamarin.Forms.DualScreen
 {
-
-	public class CompactModeArgs : EventArgs
-	{
-		public Func<Task> Close { get; set; }
-		public bool Success { get; set; }
-	}
-
-    public interface IHingeService : INotifyPropertyChanged, IDisposable
+    public interface IHingeService : IDisposable
 	{
 		event EventHandler<HingeEventArgs> OnHingeUpdated;
 
@@ -21,10 +14,6 @@ namespace XamarinTV.Services
 		bool IsLandscape { get; }
 
 		Rectangle GetHinge();
-
-		Task<CompactModeArgs> OpenCompactMode(ContentPage contentPage);
-		Task<bool> PromoteToCompactMode();
-		Task<bool> DemoteFromCompactMode();
 	}
 
 	public class HingeEventArgs : EventArgs

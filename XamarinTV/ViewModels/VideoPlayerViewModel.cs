@@ -33,14 +33,6 @@ namespace XamarinTV.ViewModels
                     mediaItem.DisplayTitle = Video.Title;
                     mediaItem.Year = Video.ReleaseDate.Year;
                 }
-                else
-                {
-                    var item = await CrossMediaManager.Current.Extractor.CreateMediaItemFromResource("/Assets/video.mp4");
-                    var mediaItem = await CrossMediaManager.Current.PlayFromResource("ms-appx:///Assets/video.mp4");
-
-                    mediaItem.DisplayTitle = Video.Title;
-                    mediaItem.Year = Video.ReleaseDate.Year;
-                }
 
                 IsBusy = false;
             }

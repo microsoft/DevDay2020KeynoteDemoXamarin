@@ -1,4 +1,4 @@
-﻿using XamarinTV.Services;
+﻿
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,9 +6,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Xamarin.Forms;
 
-namespace XamarinTV.Views
+namespace Xamarin.Forms.DualScreen
 {
-    public class FormsWindow : INotifyPropertyChanged
+    public class TwoPaneViewLayoutGuide : INotifyPropertyChanged
     {
         ILayoutService LayoutService => DependencyService.Get<ILayoutService>();
         IHingeService HingeService => DependencyService.Get<IHingeService>();
@@ -23,12 +23,13 @@ namespace XamarinTV.Views
         Rectangle containerArea;
         Page _mainPage;
         Layout _layout;
+        VisualStateGroupList _visualStateGroups;
 
-        public FormsWindow(ContentPage contentPage) : this (contentPage, null)
+        public TwoPaneViewLayoutGuide(ContentPage contentPage) : this (contentPage, null)
         {
         }
 
-        public FormsWindow(ContentPage contentPage, Layout layout)
+        public TwoPaneViewLayoutGuide(ContentPage contentPage, Layout layout)
         {
             _layout = layout;
             _mainPage = contentPage;
@@ -47,6 +48,8 @@ namespace XamarinTV.Views
             {
                 _layout.SizeChanged += OnMainPageLayoutChanged;
             }
+
+            _visualStateGroups = new VisualStateGroupList();
         }
 
         void OnMainPageLayoutChanged(object sender, EventArgs e)

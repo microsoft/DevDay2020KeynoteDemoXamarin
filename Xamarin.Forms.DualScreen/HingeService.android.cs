@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Views;
 using Microsoft.Device.Display;
-using XamarinTV.Android.Services;
-using XamarinTV.Services;
 using Xamarin.Forms;
+using Xamarin.Forms.DualScreen;
 
 [assembly: Dependency(typeof(HingeService))]
 
-namespace XamarinTV.Android.Services
+namespace Xamarin.Forms.DualScreen
 {
     public class HingeService : IHingeService, IDisposable
 	{
@@ -124,24 +123,7 @@ namespace XamarinTV.Android.Services
 
 		double PixelsToDp(double px)
 			=> px / MainActivity.Resources.DisplayMetrics.Density;
-
-		public Task<CompactModeArgs> OpenCompactMode(ContentPage contentPage)
-		{
-			return Task.FromResult(new CompactModeArgs() { Success = false });
-		}
-
-
-		public Task<bool> PromoteToCompactMode()
-		{
-			return Task.FromResult(false);
-		}
-
-		public Task<bool> DemoteFromCompactMode()
-		{
-			return Task.FromResult(false);
-		}
-
+		
 		public event EventHandler<HingeEventArgs> OnHingeUpdated;
-		public event PropertyChangedEventHandler PropertyChanged;
 	}
 }

@@ -120,8 +120,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Effects\TouchEffect.cs" />
-    <Compile Include="HingeService.cs" />
-    <Compile Include="LayoutService.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -240,6 +238,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Xamarin.Forms.DualScreen\Xamarin.Forms.DualScreen.csproj">
+      <Project>{d72d4d6d-c806-41c9-9976-644147474016}</Project>
+      <Name>Xamarin.Forms.DualScreen</Name>
+    </ProjectReference>
     <ProjectReference Include="..\XamarinTV\XamarinTV.csproj">
       <Project>{2ba185eb-4447-4867-be4f-b27e15184aff}</Project>
       <Name>XamarinTV</Name>
