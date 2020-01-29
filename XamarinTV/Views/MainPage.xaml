@@ -10,9 +10,8 @@
     x:Class="XamarinTV.Views.MainPage"
     Visual="Material">
     <dualScreen:TwoPaneView
-        IsLandscape="{Binding IsLandscape, Mode=OneWayToSource}"
-        MinTallModeHeight="4000"
-        MinWideModeWidth="4000"
+        MinTallModeHeight="0"
+        MinWideModeWidth="4000"        
         Mode="{Binding TwoPaneViewMode, Mode=OneWayToSource}"
         TallModeConfiguration="{Binding TallModeConfiguration}"
         WideModeConfiguration="{Binding WideModeConfiguration}">

@@ -103,74 +103,98 @@ namespace XamarinTV.ViewModels
             }
         }
 
-        public bool IsLandscape
-        {
-            private get => _isLandscape;
-            set
-            {
-                if (SetProperty(ref _isLandscape, value))
-                {
-                    UpdateLayouts();
-                }
-            }
-        }
+        //public bool IsLandscape
+        //{
+        //    private get => _isLandscape;
+        //    set
+        //    {
+        //        if (SetProperty(ref _isLandscape, value))
+        //        {
+        //            UpdateLayouts();
+        //        }
+        //    }
+        //}
 
         void UpdateLayouts()
         {
+            //if (VideoPlayerViewModel.Video != null)
+            //{
+            //    if (TwoPaneViewMode == TwoPaneViewMode.SinglePane)
+            //        VideoDetailViewModel.TopViewModel = VideoPlayerViewModel;
+            //    else
+            //        VideoDetailViewModel.TopViewModel = null;
+
+            //    BrowseVideosViewModel.TopViewModel = null;
+            //}
+            //else
+            //{
+            //    BrowseVideosViewModel.TopViewModel = TopVideosViewModel;
+            //    VideoDetailViewModel.TopViewModel = null;
+            //}
+
             if (VideoPlayerViewModel.Video != null)
             {
-                if (TwoPaneViewMode == TwoPaneViewMode.SinglePane)
-                    VideoDetailViewModel.TopViewModel = VideoPlayerViewModel;
-                else
-                    VideoDetailViewModel.TopViewModel = null;
-
-                BrowseVideosViewModel.TopViewModel = null;
+                Pane1 = VideoPlayerViewModel;
+                Pane2 = VideoDetailViewModel;
+                TallModeConfiguration = TwoPaneViewTallModeConfiguration.BottomTop;
+                WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;                
             }
             else
             {
-                BrowseVideosViewModel.TopViewModel = TopVideosViewModel;
-                VideoDetailViewModel.TopViewModel = null;
-            }
-
-            if (TwoPaneViewMode == TwoPaneViewMode.SinglePane)
-            {
-                Pane2 = null;
-                if (VideoPlayerViewModel.Video != null)
-                {
-                    if (!IsLandscape)
-                        Pane1 = VideoDetailViewModel;
-                    else
-                        Pane1 = VideoPlayerViewModel;
-                }
-                else
-                {
-                    Pane1 = BrowseVideosViewModel;
-                }
-            }
-            else
-            {
-                if (VideoPlayerViewModel.Video != null)
-                {
-                    Pane1 = VideoDetailViewModel;
-                    Pane2 = VideoPlayerViewModel;
-                }
-                else
-                {
-                    Pane1 = SearchVideosViewModel;
-                    Pane2 = BrowseVideosViewModel;
-                }
-            }
-
-            if (Pane2 == null)
-            {
+                Pane1 = TopVideosViewModel;
+                Pane2 = BrowseVideosViewModel;
                 TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
                 WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
             }
-            else
-            {
-                TallModeConfiguration = TwoPaneViewTallModeConfiguration.BottomTop;
-                WideModeConfiguration = TwoPaneViewWideModeConfiguration.RightLeft;
-            }
+
+            //if (Pane2 == null)
+            //{
+            //    TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
+            //    WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
+            //}
+            //else
+            //{
+            //    TallModeConfiguration = TwoPaneViewTallModeConfiguration.BottomTop;
+            //    WideModeConfiguration = TwoPaneViewWideModeConfiguration.RightLeft;
+            //}
+
+            //if (TwoPaneViewMode == TwoPaneViewMode.SinglePane)
+            //{
+            //    Pane2 = null;
+            //    if (VideoPlayerViewModel.Video != null)
+            //    {
+            //        Pane1 = VideoPlayerViewModel;
+            //        Pane2 = VideoDetailViewModel;
+            //    }
+            //    else
+            //    {
+            //        Pane1 = BrowseVideosViewModel;
+            //    }
+            //}
+            //else
+            //{
+            //    if (VideoPlayerViewModel.Video != null)
+            //    {
+            //        Pane1 = VideoDetailViewModel;
+            //        Pane2 = VideoPlayerViewModel;
+            //    }
+            //    else
+            //    {
+            //        Pane1 = SearchVideosViewModel;
+            //        Pane2 = BrowseVideosViewModel;
+            //    }
+            //}
+
+            //if (Pane2 == null)
+            //{
+            //    TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
+            //    WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
+            //}
+            //else
+            //{
+            //    TallModeConfiguration = TwoPaneViewTallModeConfiguration.BottomTop;
+            //    WideModeConfiguration = TwoPaneViewWideModeConfiguration.RightLeft;
+            //}
         }
 
         public override void OnFirstAppearing()
