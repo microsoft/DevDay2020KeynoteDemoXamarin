@@ -236,20 +236,41 @@ namespace XamarinTV.ViewModels
 
         SettingsViewModel OnCreateSettingsViewModel()
         {
-            var viewModel = new SettingsViewModel
-            {
-                CloseCommand = new Command(() =>
-                {
-                    UpdateLayouts();
-                })
-            };
+            var viewModel = new SettingsViewModel();
 
             return viewModel;
         }
 
-        public void OpenSettingWindow()
+        public async void OpenSettingWindow()
         {
-            Pane1 = SettingsViewModel;
+            if(!WindowHelper.HasCompactModeSupport())
+            {
+                if (SettingsViewModel.CloseCommand == null)
+                    SettingsViewModel.CloseCommand = new Command(() => UpdateLayouts());
+
+                Pane1 = SettingsViewModel;
+                return;
+            }
+
+            if (SettingsViewModel.CloseCommand != null)
+                return;
+
+            Views.SettingsView settingsView = new SettingsView()
+            {
+            };
+
+            var closeMeArgs = await WindowHelper.OpenCompactMode(new ContentPage()
+            {
+                Content = settingsView
+            });
+
+            SettingsViewModel.CloseCommand = new Command(async () =>
+            {
+                SettingsViewModel.CloseCommand = null;
+                await closeMeArgs.Close();
+            });
+
+            settingsView.BindingContext = SettingsViewModel;
         }
 
         public void OpenVideoPlayerWindow(Video video)

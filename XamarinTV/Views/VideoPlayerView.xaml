@@ -118,6 +118,8 @@
                             Width="*" />
                         <ColumnDefinition
                             Width="Auto" />
+                        <ColumnDefinition
+                            Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <BoxView
                         Opacity="0.4"
@@ -131,6 +133,11 @@
                         Style="{StaticResource TitleStyle}" />
                     <ImageButton
                         Grid.Column="1"
+                        Command="{Binding OpenNewWindowCommand}"
+                        Source="{StaticResource IconWindowOpenNew}"
+                        Style="{StaticResource OpenNewWindowButtonStyle}" />
+                    <ImageButton
+                        Grid.Column="2"
                         Command="{Binding CloseCommand}"
                         Source="{StaticResource IconWindowClose}"
                         Style="{StaticResource CloseButtonStyle}" />

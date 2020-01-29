@@ -18,7 +18,7 @@ namespace Xamarin.Forms.DualScreen
         static double ScaledPixels(double n)
             => n / DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
 
-        public static bool IsCompactModeSupport()
+        public static bool HasCompactModeSupport()
         {
             return ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
         }
@@ -35,17 +35,6 @@ namespace Xamarin.Forms.DualScreen
                 Content = frameworkElement
             };
 
-            frame.SizeChanged += (_, __) =>
-            {
-                contentPage.HeightRequest = ScaledPixels(frame.ActualWidth);
-                contentPage.WidthRequest = ScaledPixels(frame.ActualHeight);
-
-                var content = contentPage.Content as Layout;
-
-                Layout.LayoutChildIntoBoundingRegion(content,
-                    new Rectangle(0, 0, ScaledPixels(frame.ActualWidth), ScaledPixels(frame.ActualHeight)));
-            };
-
             // 2. Create the pageand set the new window's content
             ElementCompositionPreview.SetAppWindowContent(appWindow, frame);
             CompactModeArgs args = null;
@@ -59,11 +48,27 @@ namespace Xamarin.Forms.DualScreen
                 if (result)
                 {
                     appWindow.Presenter.RequestPresentation(AppWindowPresentationKind.CompactOverlay);
+
+
+
+                    frame.SizeChanged += OnFrameSizeChanged;
+
+                    void OnFrameSizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
+                    {
+                        contentPage.HeightRequest = frame.ActualWidth;
+                        contentPage.WidthRequest = frame.ActualHeight;
+
+                        var content = contentPage.Content as Layout;
+
+                        Layout.LayoutChildIntoBoundingRegion(content,
+                            new Rectangle(0, 0, frame.ActualWidth, frame.ActualHeight));
+                    }
+
                     args = new CompactModeArgs(async () =>
                     {
+                        frame.SizeChanged -= OnFrameSizeChanged;
                         await appWindow.CloseAsync();
                     }, true);
-
                 }
             }
             
@@ -74,6 +79,11 @@ namespace Xamarin.Forms.DualScreen
             }
 
             return args;
+        }
+
+        private static void Frame_SizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

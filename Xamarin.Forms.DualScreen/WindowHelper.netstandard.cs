@@ -7,7 +7,7 @@ namespace Xamarin.Forms.DualScreen
 {
     public static class WindowHelper
     {
-        public static bool IsCompactModeSupport()
+        public static bool HasCompactModeSupport()
         {
             return false;
         }
