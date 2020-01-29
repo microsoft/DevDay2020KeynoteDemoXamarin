@@ -16,13 +16,19 @@
   <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup  Condition="'$(Use2017)' == 'true'">
+  <PropertyGroup Condition="'$(Use2017)' == 'true'">
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>bin\$(Configuration)\$(TargetFramework)</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="**\*.shared.cs" />
     <Compile Include="**\*.shared.*.cs" />
+  </ItemGroup>
+  <ItemGroup Condition=" $(TargetFramework.StartsWith('netstandard')) ">
+    <Compile Include="**\*.netstandard.cs" />
+    <Compile Include="**\*.netstandard.*.cs" />
+    <!--<ProjectReference Include="..\Xamarin.Forms.Platform.UAP\Xamarin.Forms.Platform.UAP.csproj">
+    </ProjectReference>-->
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.0.15" />
