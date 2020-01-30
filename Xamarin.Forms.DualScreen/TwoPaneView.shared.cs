@@ -51,6 +51,7 @@ namespace Xamarin.Forms.DualScreen
         ViewMode _currentMode;
         bool _hasMeasured = false;
         bool _updatingMode = false;
+        bool _performingLayout = false;
 
         public static readonly BindableProperty TallModeConfigurationProperty
             = BindableProperty.Create("TallModeConfiguration", typeof(TwoPaneViewTallModeConfiguration), typeof(TwoPaneView), defaultValue: TwoPaneViewTallModeConfiguration.SinglePane, propertyChanged: OnJustInvalidateLayout);
@@ -221,33 +222,14 @@ namespace Xamarin.Forms.DualScreen
         {
             if (e.PropertyName == nameof(DualScreen.TwoPaneViewLayoutGuide.IsLandscape) || e.PropertyName == nameof(DualScreen.TwoPaneViewLayoutGuide.IsSpanned))
             {
-                if (!TwoPaneViewLayoutGuide.IsSpanned)
-                {
-                    SetValue(ModePropertyKey, TwoPaneViewMode.SinglePane);
-                }
-                else if (TwoPaneViewLayoutGuide.IsLandscape)
-                {
-                    SetValue(ModePropertyKey, TwoPaneViewMode.Tall);
-                }
-                else if (TwoPaneViewLayoutGuide.IsPortrait)
-                {
-                    SetValue(ModePropertyKey, TwoPaneViewMode.Wide);
-                }
-
-                OnJustInvalidateLayout(this, null, null);
+                UpdateMode();
             }
         }
-
-        public bool IsDualView
-            => Pane1.IsVisible && Pane2.IsVisible;
 
         public bool IsLandscape { get => (bool)GetValue(IsLandscapeProperty); }
 
         public bool IsPortrait => !IsLandscape;
 
-        public bool IsSpanned => TwoPaneViewLayoutGuide.IsSpanned;
-
-        bool _performingLayout = false;
         protected override void LayoutChildren(double x, double y, double width, double height)
         {
             if (_updatingMode)
@@ -291,10 +273,9 @@ namespace Xamarin.Forms.DualScreen
                     SetValue(MinTallModeHeightProperty, 641 / Device.info.ScalingFactor);
                 }
 
-                bool isInMultipleRegions = IsSpanned;
-                if (isInMultipleRegions)
+                if (TwoPaneViewLayoutGuide.IsSpanned)
                 {
-                    if (Mode == TwoPaneViewMode.Wide)
+                    if (TwoPaneViewLayoutGuide.IsPortrait)
                     {
                         // Regions are laid out horizontally
                         if (WideModeConfiguration != TwoPaneViewWideModeConfiguration.SinglePane)
@@ -302,7 +283,7 @@ namespace Xamarin.Forms.DualScreen
                             newMode = (WideModeConfiguration == TwoPaneViewWideModeConfiguration.LeftRight) ? ViewMode.LeftRight : ViewMode.RightLeft;
                         }
                     }
-                    else if (Mode == TwoPaneViewMode.Tall)
+                    else if (TwoPaneViewLayoutGuide.IsLandscape)
                     {
                         // Regions are laid out vertically
                         if (TallModeConfiguration != TwoPaneViewTallModeConfiguration.SinglePane)
@@ -348,6 +329,7 @@ namespace Xamarin.Forms.DualScreen
 
                     if (newViewMode != Mode)
                     {
+                        _updatingMode = false;
                         SetValue(ModePropertyKey, newViewMode);
                     }
                 }
@@ -400,13 +382,13 @@ namespace Xamarin.Forms.DualScreen
             }
 
             // Handle regions
-            if (IsSpanned && newMode != ViewMode.Pane1Only && newMode != ViewMode.Pane2Only)
+            if (TwoPaneViewLayoutGuide.IsSpanned && newMode != ViewMode.Pane1Only && newMode != ViewMode.Pane2Only)
             {
                 Rectangle rc1 = _twoPaneViewLayoutGuide.Pane1;
                 Rectangle rc2 = _twoPaneViewLayoutGuide.Pane2;
                 Rectangle hinge = _twoPaneViewLayoutGuide.Hinge;
 
-                if (Mode == TwoPaneViewMode.Wide)
+                if (_twoPaneViewLayoutGuide.IsPortrait)
                 {
                     _columnMiddle.Width = new GridLength(hinge.Width, GridUnitType.Absolute);
                     _columnLeft.Width = new GridLength(rc1.Width, GridUnitType.Absolute);

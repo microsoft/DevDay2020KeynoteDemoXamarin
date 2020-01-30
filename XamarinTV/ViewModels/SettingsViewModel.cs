@@ -80,12 +80,12 @@ namespace XamarinTV.ViewModels
         void ViewCode()
         {
             string url = "https://github.com/microsoft/surface-duo-sdk-xamarin-samples";
-            Launcher.OpenAsync(new Uri(url));
+            Browser.OpenAsync(new Uri(url));
         }
 
         void OpenGitHub(string url)
         {
-            Launcher.OpenAsync(new Uri(url));
+            Browser.OpenAsync(new Uri(url));
         }
     }
 }

@@ -6,7 +6,6 @@ namespace XamarinTV.ViewModels
     public class VideoDetailViewModel : BaseViewModel
     {
         Video _selectedVideo;
-        BaseViewModel _topViewModel;
         int _selectedViewModelIndex;
 
         public Video SelectedVideo
@@ -28,12 +27,6 @@ namespace XamarinTV.ViewModels
         public string Description
         {
             get { return _selectedVideo.Description; }
-        }
-
-        public BaseViewModel TopViewModel
-        {
-            get => _topViewModel;
-            set { SetProperty(ref _topViewModel, value); }
         }
 
         public int SelectedViewModelIndex
