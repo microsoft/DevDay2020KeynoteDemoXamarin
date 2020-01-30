@@ -3,7 +3,6 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodels="clr-namespace:XamarinTV.ViewModels"
-    xmlns:mediamanager="clr-namespace:MediaManager.Forms;assembly=MediaManager.Forms"
     x:Class="XamarinTV.Views.VideoPlayerView"
     BackgroundColor="Transparent">
     <ContentView.Resources>
@@ -48,7 +47,7 @@
 
             <Style
                 x:Key="VideoPlayerStyle"
-                TargetType="mediamanager:VideoView">
+                TargetType="MediaElement">
                 <Setter
                     Property="BackgroundColor"
                     Value="{DynamicResource BackgroundColor}" />
@@ -56,16 +55,16 @@
                     Property="AutoPlay"
                     Value="True" />
                 <Setter
-                    Property="ShowControls"
+                    Property="ShowsPlaybackControls"
                     Value="True" />
                 <Setter
-                    Property="Repeat"
-                    Value="Off" />
+                    Property="IsLooping"
+                    Value="False" />
                 <Setter
                     Property="VerticalOptions"
                     Value="FillAndExpand" />
                 <Setter
-                    Property="VideoAspect"
+                    Property="Aspect"
                     Value="AspectFit" />
             </Style>
 
@@ -99,12 +98,11 @@
                     <RowDefinition
                         Height="*" />
                 </Grid.RowDefinitions>
-                <mediamanager:VideoView
-                    Grid.Row="1"
-                    x:Name="VideoView"
-                    Style="{StaticResource VideoPlayerStyle}" />
-                <!-- TODO: below currently overlaps. would like to hide native player controls
-                bundle them with this bar, and add a delay to auto-hide the whole thing -->
+                <MediaElement Grid.Row="1" 
+                              x:Name="VideoView"
+                              BackgroundColor="Blue"
+                              Style="{StaticResource VideoPlayerStyle}"/>
+                
                 <Grid
                     Grid.Row="0"
                     Grid.RowSpan="3"
