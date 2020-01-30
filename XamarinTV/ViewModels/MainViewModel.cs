@@ -12,6 +12,7 @@ namespace XamarinTV.ViewModels
     {
         BaseViewModel _pane1;
         BaseViewModel _pane2;
+        TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide = new TwoPaneViewLayoutGuide();
 
         readonly Lazy<BrowseVideosViewModel> _browseVideosViewModel;
         readonly Lazy<SearchVideosViewModel> _searchVideosViewModel;
@@ -32,9 +33,10 @@ namespace XamarinTV.ViewModels
         TwoPaneViewTallModeConfiguration _tallModeConfiguration;
         TwoPaneViewWideModeConfiguration _wideModeConfiguration;
         TwoPaneViewMode _twoPaneViewMode;
-        bool _isLandscape;
-
-
+        double minWideModeWidth;
+        double minTallModeHeight;
+        private GridLength pane1Length;
+        private GridLength pane2Length;
 
         public Command<Video> PlayVideoCommand { get; }
         public Command OpenSettingWindowCommand { get; }
@@ -90,86 +92,74 @@ namespace XamarinTV.ViewModels
             get => _wideModeConfiguration;
             set => SetProperty(ref _wideModeConfiguration, value);
         }
-        
+
         public TwoPaneViewMode TwoPaneViewMode
         {
             get => _twoPaneViewMode;
             set
             {
-                if(SetProperty(ref _twoPaneViewMode, value))
+                if (SetProperty(ref _twoPaneViewMode, value))
                 {
                     UpdateLayouts();
                 }
             }
         }
 
-        public bool IsLandscape
+        public double MinWideModeWidth
         {
-            private get => _isLandscape;
-            set
-            {
-                if (SetProperty(ref _isLandscape, value))
-                {
-                    UpdateLayouts();
-                }
-            }
+            get => minWideModeWidth;
+            set => SetProperty(ref minWideModeWidth, value);
+        }
+
+        public double MinTallModeHeight
+        {
+            get => minTallModeHeight;
+            set => SetProperty(ref minTallModeHeight, value);
+        }
+
+        public GridLength Pane1Length
+        {
+            get => pane1Length;
+            set => SetProperty(ref pane1Length, value);
+        }
+
+        public GridLength Pane2Length
+        {
+            get => pane2Length;
+            set => SetProperty(ref pane2Length, value);
         }
 
         void UpdateLayouts()
         {
             if (VideoPlayerViewModel.Video != null)
             {
-                if (TwoPaneViewMode == TwoPaneViewMode.SinglePane)
-                    VideoDetailViewModel.TopViewModel = VideoPlayerViewModel;
+                if(Device.RuntimePlatform == Device.UWP)
+                    MinTallModeHeight = 800;
                 else
-                    VideoDetailViewModel.TopViewModel = null;
+                    MinTallModeHeight = 600;
 
-                BrowseVideosViewModel.TopViewModel = null;
+                MinWideModeWidth = 4000;
+                Pane1Length = GridLength.Auto;
+                Pane2Length = GridLength.Star;
+                Pane1 = VideoPlayerViewModel;
+                Pane2 = VideoDetailViewModel;
+                TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
+                
+                if (!_twoPaneViewLayoutGuide.IsSpanned)
+                    WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
+                else
+                    WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
             }
             else
             {
-                BrowseVideosViewModel.TopViewModel = TopVideosViewModel;
-                VideoDetailViewModel.TopViewModel = null;
-            }
-
-            if (TwoPaneViewMode == TwoPaneViewMode.SinglePane)
-            {
-                Pane2 = null;
-                if (VideoPlayerViewModel.Video != null)
-                {
-                    if (!IsLandscape)
-                        Pane1 = VideoDetailViewModel;
-                    else
-                        Pane1 = VideoPlayerViewModel;
-                }
-                else
-                {
-                    Pane1 = BrowseVideosViewModel;
-                }
-            }
-            else
-            {
-                if (VideoPlayerViewModel.Video != null)
-                {
-                    Pane1 = VideoDetailViewModel;
-                    Pane2 = VideoPlayerViewModel;
-                }
-                else
-                {
-                    Pane1 = SearchVideosViewModel;
-                    Pane2 = BrowseVideosViewModel;
-                }
-            }
-
-            if (Pane2 == null)
-            {
+                Pane1Length = new GridLength(2, GridUnitType.Star);
+                Pane2Length = new GridLength(3, GridUnitType.Star);
+                MinTallModeHeight = 0;
+                MinWideModeWidth = 4000;
+                Pane1 = TopVideosViewModel;
+                Pane2 = BrowseVideosViewModel;
                 TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
                 WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
-            }
-            else
-            {
-                TallModeConfiguration = TwoPaneViewTallModeConfiguration.BottomTop;
-                WideModeConfiguration = TwoPaneViewWideModeConfiguration.RightLeft;
             }
         }
 
@@ -224,7 +214,7 @@ namespace XamarinTV.ViewModels
 
             UpdateLayouts();
         }
-        
+
         async void OnPlayVideo(Video video)
         {
             VideoPlayerViewModel.Video = video;
@@ -243,7 +233,7 @@ namespace XamarinTV.ViewModels
 
         public async void OpenSettingWindow()
         {
-            if(!WindowHelper.HasCompactModeSupport())
+            if (!WindowHelper.HasCompactModeSupport())
             {
                 if (SettingsViewModel.CloseCommand == null)
                     SettingsViewModel.CloseCommand = new Command(() => UpdateLayouts());
