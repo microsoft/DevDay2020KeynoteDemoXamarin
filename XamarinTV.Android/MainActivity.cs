@@ -19,7 +19,7 @@ namespace XamarinTV.Droid
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            HingeService.Init(this);
+            DualScreenService.Init(this);
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 

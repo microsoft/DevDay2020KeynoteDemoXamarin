@@ -258,9 +258,7 @@ namespace Xamarin.Forms.DualScreen
 
                 ViewMode newMode = (PanePriority == TwoPaneViewPriority.Pane1) ? ViewMode.Pane1Only : ViewMode.Pane2Only;
 
-                // Calculate new mode
-                // DisplayRegionHelperInfo info = DisplayRegionHelper.GetRegionInfo();
-                var screenLocation = DependencyService.Get<ILayoutService>().GetLocationOnScreen(this);
+                var screenLocation = DependencyService.Get<IDualScreenService>().GetLocationOnScreen(this);
                 if (screenLocation == null)
                     return;
 

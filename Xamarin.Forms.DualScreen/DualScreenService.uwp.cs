@@ -2,26 +2,17 @@
 using System.ComponentModel;
 using Windows.Graphics.Display;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using Xamarin.Forms;
-using Windows.UI.WindowManagement;
-using Windows.UI.Xaml.Hosting;
-using Xamarin.Forms.Platform.UWP;
-using System.Threading.Tasks;
 using Xamarin.Forms.DualScreen;
 
-[assembly: Dependency(typeof(HingeService))]
+[assembly: Dependency(typeof(DualScreenService))]
 namespace Xamarin.Forms.DualScreen
 {
-    public class HingeService : IHingeService
+    internal class DualScreenService : IDualScreenService
     {
-        ILayoutService LayoutService => DependencyService.Get<ILayoutService>();
-        public HingeService()
+        public DualScreenService()
         {
-        }
-
-        void FireOnHingeUpdate()
-        {
-            OnHingeUpdated?.Invoke(this, new HingeEventArgs(-1));
         }
 
         public bool IsSpanned
@@ -50,7 +41,7 @@ namespace Xamarin.Forms.DualScreen
             }
         }
 
-        public event EventHandler<HingeEventArgs> OnHingeUpdated;
+        public event EventHandler OnScreenChanged;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void Dispose()
@@ -72,10 +63,20 @@ namespace Xamarin.Forms.DualScreen
                 return new Rectangle(720, 0, 0, ScaledPixels(screen.ScreenHeightInRawPixels));
         }
 
-        double ActualPixels(double n)
-            => n * DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
-
         double ScaledPixels(double n)
             => n / DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+
+        public Point? GetLocationOnScreen(VisualElement visualElement)
+        {
+            var view = Platform.UWP.Platform.GetRenderer(visualElement);
+
+            if (view?.ContainerElement == null)
+                return null;
+
+            var ttv = view.ContainerElement.TransformToVisual(Window.Current.Content);
+            Windows.Foundation.Point screenCoords = ttv.TransformPoint(new Windows.Foundation.Point(0, 0));
+
+            return new Point(screenCoords.X, screenCoords.Y);
+        }
     }
 }

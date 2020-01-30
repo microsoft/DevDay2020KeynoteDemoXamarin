@@ -56,7 +56,6 @@
             <ContentView
                 Grid.Row="0"
                 x:Name="ContentView"
-                BindingContextChanged="OnContentViewBindingContextChanged"
                 BindingContext="{Binding TopViewModel}"
                 Content="{Binding ., Converter={StaticResource ViewModelToViewConverter}}" />
             <!-- RELATED VIDEO CONTENT -->

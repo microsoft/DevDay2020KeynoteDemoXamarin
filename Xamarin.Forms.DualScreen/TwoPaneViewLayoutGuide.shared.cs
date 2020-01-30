@@ -3,15 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using Xamarin.Forms;
 
 namespace Xamarin.Forms.DualScreen
 {
     public class TwoPaneViewLayoutGuide : INotifyPropertyChanged
     {
-        ILayoutService LayoutService => DependencyService.Get<ILayoutService>();
-        IHingeService HingeService => DependencyService.Get<IHingeService>();
+        IDualScreenService DualScreenService => 
+            DependencyService.Get<IDualScreenService>() ?? NoDualScreenServiceImpl.Instance;
 
         Rectangle hinge;
         Rectangle toolbar;
@@ -30,7 +28,7 @@ namespace Xamarin.Forms.DualScreen
         public TwoPaneViewLayoutGuide(Layout layout)
         {
             _layout = layout;
-            HingeService.OnHingeUpdated += OnHingeUpdated;
+            DualScreenService.OnScreenChanged += OnScreenChanged;
 
             if (_layout != null)
             {
@@ -43,9 +41,9 @@ namespace Xamarin.Forms.DualScreen
             UpdateLayouts();
         }
 
-        void OnHingeUpdated(object sender, HingeEventArgs e)
+        void OnScreenChanged(object sender, EventArgs e)
         {
-            Hinge = HingeService.GetHinge();
+            Hinge = DualScreenService.GetHinge();
             UpdateLayouts();
         }
 
@@ -67,15 +65,15 @@ namespace Xamarin.Forms.DualScreen
                 return;
             }
                        
-            IsSpanned = HingeService.IsSpanned;
-            IsPortrait = !HingeService.IsLandscape;
-            IsLandscape = HingeService.IsLandscape;
+            IsSpanned = DualScreenService.IsSpanned;
+            IsPortrait = !DualScreenService.IsLandscape;
+            IsLandscape = DualScreenService.IsLandscape;
             ContainerArea = containerArea;
-            Hinge = HingeService.GetHinge();
+            Hinge = DualScreenService.GetHinge();
             
-            if (!HingeService.IsLandscape)
+            if (!DualScreenService.IsLandscape)
             {
-                if (HingeService.IsSpanned)
+                if (DualScreenService.IsSpanned)
                 {
                     var paneWidth = (containerArea.Width - Hinge.Width) / 2;
                     Pane1 = new Rectangle(0, 0, paneWidth, containerArea.Height);
@@ -92,9 +90,9 @@ namespace Xamarin.Forms.DualScreen
                 Point displayedScreenAbsCoordinates = Point.Zero;
 
                 if (_layout != null)
-                    displayedScreenAbsCoordinates = LayoutService.GetLocationOnScreen(_layout) ?? Point.Zero;
+                    displayedScreenAbsCoordinates = DualScreenService.GetLocationOnScreen(_layout) ?? Point.Zero;
 
-                if (HingeService.IsSpanned)
+                if (DualScreenService.IsSpanned)
                 {
                     var screenSize = Device.info.ScaledScreenSize;
                     var topStuffHeight = displayedScreenAbsCoordinates.Y;
@@ -118,7 +116,7 @@ namespace Xamarin.Forms.DualScreen
         {
             get
             {
-                return !HingeService.IsLandscape;
+                return !DualScreenService.IsLandscape;
             }
             set
             {
@@ -130,7 +128,7 @@ namespace Xamarin.Forms.DualScreen
         {
             get
             {
-                return HingeService.IsLandscape;
+                return DualScreenService.IsLandscape;
             }
             set
             {
@@ -142,7 +140,7 @@ namespace Xamarin.Forms.DualScreen
         {
             get
             {
-                return HingeService.IsSpanned;
+                return DualScreenService.IsSpanned;
             }
             set
             {
