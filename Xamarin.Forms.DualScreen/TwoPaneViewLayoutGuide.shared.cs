@@ -12,13 +12,9 @@ namespace Xamarin.Forms.DualScreen
             DependencyService.Get<IDualScreenService>() ?? NoDualScreenServiceImpl.Instance;
 
         Rectangle hinge;
-        Rectangle toolbar;
         Rectangle leftPane;
         Rectangle rightPane;
-        bool isSpanned;
-        bool isLandscape;
-        bool isPortrait;
-        Rectangle containerArea;
+        TwoPaneViewMode _mode;
         Layout _layout;
 
         public TwoPaneViewLayoutGuide()
@@ -64,11 +60,8 @@ namespace Xamarin.Forms.DualScreen
             {
                 return;
             }
-                       
-            IsSpanned = DualScreenService.IsSpanned;
-            IsPortrait = !DualScreenService.IsLandscape;
-            IsLandscape = DualScreenService.IsLandscape;
-            ContainerArea = containerArea;
+
+            Mode = GetTwoPaneViewMode();
             Hinge = DualScreenService.GetHinge();
             
             if (!DualScreenService.IsLandscape)
@@ -112,39 +105,26 @@ namespace Xamarin.Forms.DualScreen
             }
         }
 
-        public bool IsPortrait
+        TwoPaneViewMode GetTwoPaneViewMode()
         {
-            get
-            {
-                return !DualScreenService.IsLandscape;
-            }
-            set
-            {
-                SetProperty(ref isPortrait, value);
-            }
+            if (!DualScreenService.IsSpanned)
+                return TwoPaneViewMode.SinglePane;
+
+            if (DualScreenService.IsLandscape)
+                return TwoPaneViewMode.Tall;
+
+            return TwoPaneViewMode.Wide;
         }
 
-        public bool IsLandscape
+        public TwoPaneViewMode Mode
         {
             get
             {
-                return DualScreenService.IsLandscape;
+                return GetTwoPaneViewMode();
             }
             set
             {
-                SetProperty(ref isLandscape, value);
-            }
-        }
-
-        public bool IsSpanned
-        {
-            get
-            {
-                return DualScreenService.IsSpanned;
-            }
-            set
-            {
-                SetProperty(ref isSpanned, value);
+                SetProperty(ref _mode, value);
             }
         }
 
@@ -157,18 +137,6 @@ namespace Xamarin.Forms.DualScreen
             set
             {
                 SetProperty(ref leftPane, value);
-            }
-        }
-
-        public Rectangle ContainerArea
-        {
-            get
-            {
-                return containerArea;
-            }
-            set
-            {
-                SetProperty(ref containerArea, value);
             }
         }
 
@@ -193,15 +161,6 @@ namespace Xamarin.Forms.DualScreen
             set
             {
                 SetProperty(ref hinge, value);
-            }
-        }
-
-        public Rectangle Toolbar
-        {
-            get => toolbar;
-            set
-            {
-                SetProperty(ref toolbar, value);
             }
         }
 

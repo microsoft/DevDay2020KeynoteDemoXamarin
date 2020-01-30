@@ -143,7 +143,7 @@ namespace XamarinTV.ViewModels
                 Pane2 = VideoDetailViewModel;
                 TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
                 
-                if (!_twoPaneViewLayoutGuide.IsSpanned)
+                if (_twoPaneViewLayoutGuide.Mode == TwoPaneViewMode.SinglePane)
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
                 else
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
@@ -157,7 +157,7 @@ namespace XamarinTV.ViewModels
                 Pane1 = BrowseVideosViewModel;
                 Pane2 = SearchVideosViewModel;
 
-                if (!_twoPaneViewLayoutGuide.IsSpanned)
+                if (_twoPaneViewLayoutGuide.Mode == TwoPaneViewMode.SinglePane)
                 {
                     TallModeConfiguration = TwoPaneViewTallModeConfiguration.SinglePane;
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
