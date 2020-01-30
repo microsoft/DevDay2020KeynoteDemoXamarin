@@ -72,6 +72,24 @@
                      Color="Gray"
                      Size="18"/>
 
+    <FontImageSource x:Key="IconCloseCaption"
+                     FontFamily="{StaticResource FontAwesome}"
+                     Glyph="{x:Static fonts:IconFont.ClosedCaptioning}"
+                     Color="Gray"
+                     Size="24"/>
+
+    <FontImageSource x:Key="IconHighDefinition"
+                     FontFamily="{StaticResource FontAwesome}"
+                     Glyph="{x:Static fonts:IconFont.Tv}"
+                     Color="Gray"
+                     Size="24"/>
+
+    <FontImageSource x:Key="IconMute"
+                     FontFamily="{StaticResource FontAwesome}"
+                     Glyph="{x:Static fonts:IconFont.VolumeMute}"
+                     Color="Gray"
+                     Size="24"/>
+
     <!-- FONT SIZES -->
     <OnPlatform x:Key="LittleSize" x:TypeArguments="x:Double" iOS="9" Android="9" />
     <OnPlatform x:Key="MidMediumSize" x:TypeArguments="x:Double" iOS="12" Android="14" />

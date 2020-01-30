@@ -52,6 +52,8 @@
                     Height="{StaticResource TopBarHeight}" />
                 <RowDefinition
                     Height="3*" />
+                <RowDefinition
+                    Height="85" />
             </Grid.RowDefinitions>
             <ContentView
                 Grid.Row="0"
@@ -77,6 +79,8 @@
             </tabs:TabHostView>
             <tabs:ViewSwitcher
                 Grid.Row="2"
+                Grid.RowSpan="2"
+                Margin="0,0,0,90"
                 x:Name="Switcher"
                 Animate="True"
                 SelectedIndex="{Binding SelectedViewModelIndex, Mode=TwoWay}">
@@ -84,6 +88,36 @@
                 <views:VideoCommentsView />
                 <views:NotesView />
             </tabs:ViewSwitcher>
+            <Grid
+                Grid.Row="3">
+                <BoxView
+                    BackgroundColor="Black"
+                    Opacity="0.8" />
+                <FlexLayout BackgroundColor="Transparent"
+                    JustifyContent="Start"
+                    Padding="15,0,15,15">
+                    <ImageButton
+                        BackgroundColor="Transparent"
+                        Source="{StaticResource IconMute}" />
+                    <Slider
+                        Value="0.2"
+                        ThumbColor="Gray"
+                        MinimumTrackColor="Gray"
+                        MaximumTrackColor="DarkGray"
+                        WidthRequest="100" />
+                    <BoxView
+                        FlexLayout.Grow="1" />
+                    <ImageButton
+                        BackgroundColor="Transparent"
+                        Source="{StaticResource IconCloseCaption}"
+                        Margin="0,0,15,0" />
+                    <ImageButton
+                        BackgroundColor="Transparent"
+                        Source="{StaticResource IconHighDefinition}" />
+
+
+                </FlexLayout>
+            </Grid>
         </Grid>
     </ContentView.Content>
 </ContentView>
