@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Xamarin.Forms.DualScreen
@@ -10,7 +11,7 @@ namespace Xamarin.Forms.DualScreen
         public static TwoPaneViewLayoutGuide Instance => _twoPaneViewLayoutGuide.Value;
         static Lazy<TwoPaneViewLayoutGuide> _twoPaneViewLayoutGuide = new Lazy<TwoPaneViewLayoutGuide>(() => new TwoPaneViewLayoutGuide());
 
-        IDualScreenService DualScreenService => 
+        IDualScreenService DualScreenService =>
             DependencyService.Get<IDualScreenService>() ?? NoDualScreenServiceImpl.Instance;
 
         Rectangle _hinge;
@@ -18,6 +19,9 @@ namespace Xamarin.Forms.DualScreen
         Rectangle _rightPane;
         TwoPaneViewMode _mode;
         Layout _layout;
+        private bool isLandscape;
+        public event PropertyChangedEventHandler PropertyChanged;
+        List<string> _pendingPropertyChanges = new List<string>();
 
         private TwoPaneViewLayoutGuide()
         {
@@ -37,6 +41,10 @@ namespace Xamarin.Forms.DualScreen
             {
                 _layout.SizeChanged += OnLayoutChanged;
             }
+            if (Device.Info is INotifyPropertyChanged npc)
+            {
+                npc.PropertyChanged += OnDeviceInfoChanged;
+            }
         }
 
         public void StopWatchingForChanges()
@@ -47,56 +55,11 @@ namespace Xamarin.Forms.DualScreen
             {
                 _layout.SizeChanged -= OnLayoutChanged;
             }
-        }
-
-        public TwoPaneViewMode Mode
-        {
-            get
+            if (Device.Info is INotifyPropertyChanged npc)
             {
-                return GetTwoPaneViewMode();
-            }
-            set
-            {
-                SetProperty(ref _mode, value);
+                npc.PropertyChanged -= OnDeviceInfoChanged;
             }
         }
-
-        public Rectangle Pane1
-        {
-            get
-            {
-                return _leftPage;
-            }
-            set
-            {
-                SetProperty(ref _leftPage, value);
-            }
-        }
-
-        public Rectangle Pane2
-        {
-            get
-            {
-                return _rightPane;
-            }
-            set
-            {
-                SetProperty(ref _rightPane, value);
-            }
-        }
-
-        public Rectangle Hinge
-        {
-            get
-            {
-                return _hinge;
-            }
-            set
-            {
-                SetProperty(ref _hinge, value);
-            }
-        }
-
 
         void OnLayoutChanged(object sender, EventArgs e)
         {
@@ -108,11 +71,71 @@ namespace Xamarin.Forms.DualScreen
             UpdateLayouts();
         }
 
+        void OnDeviceInfoChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == nameof(Device.Info.CurrentOrientation))
+            {
+                UpdateLayouts();
+            }
+        }
+
+        public bool IsLandscape
+        {
+            get => DualScreenService.IsLandscape;
+            set => SetProperty(ref isLandscape, value);
+        }
+
+        public TwoPaneViewMode Mode
+        {
+            get
+            {
+                return GetTwoPaneViewMode();
+            }
+            private set
+            {
+                SetProperty(ref _mode, value);
+            }
+        }
+
+        public Rectangle Pane1
+        {
+            get
+            {
+                return _leftPage;
+            }
+            private set
+            {
+                SetProperty(ref _leftPage, value);
+            }
+        }
+
+        public Rectangle Pane2
+        {
+            get
+            {
+                return _rightPane;
+            }
+            private set
+            {
+                SetProperty(ref _rightPane, value);
+            }
+        }
+
+        public Rectangle Hinge
+        {
+            get
+            {
+                return DualScreenService.GetHinge();
+            }
+            private set
+            {
+                SetProperty(ref _hinge, value);
+            }
+        }
+
         internal void UpdateLayouts()
         {
-            Hinge = DualScreenService.GetHinge();
             Rectangle containerArea;
-
             if (_layout == null)
             {
                 containerArea = new Rectangle(Point.Zero, Device.info.ScaledScreenSize);
@@ -127,21 +150,21 @@ namespace Xamarin.Forms.DualScreen
                 return;
             }
 
-            Mode = GetTwoPaneViewMode();
-            Hinge = DualScreenService.GetHinge();
-            
+            Rectangle _newPane1 = Pane1;
+            Rectangle _newPane2 = Pane2;
+
             if (!DualScreenService.IsLandscape)
             {
                 if (DualScreenService.IsSpanned)
                 {
                     var paneWidth = (containerArea.Width - Hinge.Width) / 2;
-                    Pane1 = new Rectangle(0, 0, paneWidth, containerArea.Height);
-                    Pane2 = new Rectangle(paneWidth + Hinge.Width, 0, paneWidth, Pane1.Height);
+                    _newPane1 = new Rectangle(0, 0, paneWidth, containerArea.Height);
+                    _newPane2 = new Rectangle(paneWidth + Hinge.Width, 0, paneWidth, Pane1.Height);
                 }
                 else
                 {
-                    Pane1 = new Rectangle(0, 0, containerArea.Width, containerArea.Height);
-                    Pane2 = Rectangle.Zero;
+                    _newPane1 = new Rectangle(0, 0, containerArea.Width, containerArea.Height);
+                    _newPane2 = Rectangle.Zero;
                 }
             }
             else
@@ -160,14 +183,34 @@ namespace Xamarin.Forms.DualScreen
                     var leftPaneHeight = Hinge.Y - topStuffHeight;
                     var rightPaneHeight = screenSize.Height - topStuffHeight - leftPaneHeight - bottomStuffHeight - Hinge.Height;
 
-                    Pane1 = new Rectangle(0, 0, paneWidth, leftPaneHeight);
-                    Pane2 = new Rectangle(0, Hinge.Y + Hinge.Height - topStuffHeight, paneWidth, rightPaneHeight);
+                    _newPane1 = new Rectangle(0, 0, paneWidth, leftPaneHeight);
+                    _newPane2 = new Rectangle(0, Hinge.Y + Hinge.Height - topStuffHeight, paneWidth, rightPaneHeight);
                 }
                 else
                 {
-                    Pane1 = new Rectangle(0, 0, containerArea.Width, containerArea.Height);
-                    Pane2 = Rectangle.Zero;
+                    _newPane1 = new Rectangle(0, 0, containerArea.Width, containerArea.Height);
+                    _newPane2 = Rectangle.Zero;
                 }
+            }
+
+            if (_newPane2.Height < 0 || _newPane2.Width < 0)
+                _newPane2 = Rectangle.Zero;
+
+            if (_newPane1.Height < 0 || _newPane1.Width < 0)
+                _newPane1 = Rectangle.Zero;
+
+            Pane1 = _newPane1;
+            Pane2 = _newPane2;
+            Mode = GetTwoPaneViewMode();
+            Hinge = DualScreenService.GetHinge();
+            IsLandscape = DualScreenService.IsLandscape;
+
+            var properties = _pendingPropertyChanges.ToList();
+            _pendingPropertyChanges.Clear();
+
+            foreach(var property in properties)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
             }
         }
 
@@ -191,20 +234,8 @@ namespace Xamarin.Forms.DualScreen
 
             backingStore = value;
             onChanged?.Invoke();
-            OnPropertyChanged(propertyName);
+            _pendingPropertyChanges.Add(propertyName);
             return true;
         }
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            var changed = PropertyChanged;
-            if (changed == null)
-                return;
-
-            changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
     }
 }

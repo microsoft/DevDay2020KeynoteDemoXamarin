@@ -7,24 +7,29 @@ namespace Xamarin.Forms.DualScreen
 {
     public static class WindowHelper
     {
+        static IDualScreenService DualScreenService => (DependencyService.Get<IDualScreenService>() ?? NoDualScreenServiceImpl.Instance);
         public static bool HasCompactModeSupport()
         {
-            return (DependencyService.Get<IDualScreenService>() ?? NoDualScreenServiceImpl.Instance).HasCompactModeSupport(); ;
+            return DualScreenService.HasCompactModeSupport(); ;
         }
 
         public static Task<CompactModeArgs> OpenCompactMode(ContentPage contentPage)
         {
-            return (DependencyService.Get<IDualScreenService>() ?? NoDualScreenServiceImpl.Instance).OpenCompactMode(contentPage);
+            return DualScreenService.OpenCompactMode(contentPage);
         }
 
         public static Rectangle[] GetSpanningRects()
         {
             var guide = TwoPaneViewLayoutGuide.Instance;
+            var hinge = guide.Hinge;
+            guide.UpdateLayouts();
 
-            if (guide.Hinge == Rectangle.Zero)
+            if (hinge == Rectangle.Zero)
                 return new Rectangle[0];
 
-            guide.UpdateLayouts();
+            if(guide.Pane2 == Rectangle.Zero)
+                return new Rectangle[0];
+
             return new []{ guide.Pane1, guide.Pane2 };
         }
 

@@ -125,6 +125,8 @@ namespace XamarinTV.ViewModels
             set => SetProperty(ref pane2Length, value);
         }
 
+        public bool IsSpanned => WindowHelper.GetSpanningRects().Length >= 2;
+
         public void UpdateLayouts()
         {
             if (VideoPlayerViewModel.Video != null)
@@ -141,7 +143,7 @@ namespace XamarinTV.ViewModels
                 Pane2 = VideoDetailViewModel;
                 TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
                 
-                if (_twoPaneViewLayoutGuide.Mode == TwoPaneViewMode.SinglePane)
+                if (!IsSpanned)
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
                 else
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
@@ -155,7 +157,7 @@ namespace XamarinTV.ViewModels
                 Pane1 = BrowseVideosViewModel;
                 Pane2 = SearchVideosViewModel;
 
-                if (_twoPaneViewLayoutGuide.Mode == TwoPaneViewMode.SinglePane)
+                if (!IsSpanned)
                 {
                     TallModeConfiguration = TwoPaneViewTallModeConfiguration.SinglePane;
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
@@ -166,12 +168,6 @@ namespace XamarinTV.ViewModels
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
                 }
             }
-        }
-
-        public override void OnFirstAppearing()
-        {
-            base.OnFirstAppearing();
-            Pane1 = BrowseVideosViewModel;
         }
 
         public override void OnAppearing()

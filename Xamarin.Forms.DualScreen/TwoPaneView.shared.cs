@@ -50,6 +50,7 @@ namespace Xamarin.Forms.DualScreen
         bool _hasMeasured = false;
         bool _updatingMode = false;
         bool _performingLayout = false;
+        bool _processPendingChange = false;
 
         public static readonly BindableProperty TallModeConfigurationProperty
             = BindableProperty.Create("TallModeConfiguration", typeof(TwoPaneViewTallModeConfiguration), typeof(TwoPaneView), defaultValue: TwoPaneViewTallModeConfiguration.SinglePane, propertyChanged: OnJustInvalidateLayout);
@@ -73,8 +74,6 @@ namespace Xamarin.Forms.DualScreen
 
         public static readonly BindableProperty IsLandscapeProperty = IsLandscapePropertyKey.BindableProperty;
 
-
-
         public static readonly BindableProperty PanePriorityProperty
             = BindableProperty.Create("PanePriority", typeof(TwoPaneViewPriority), typeof(TwoPaneView), defaultValue: TwoPaneViewPriority.Pane1, propertyChanged: OnJustInvalidateLayout);
 
@@ -96,6 +95,7 @@ namespace Xamarin.Forms.DualScreen
         {
             ((TwoPaneView)bindable).ModeChanged?.Invoke(bindable, EventArgs.Empty);
         }
+
         static void OnJustInvalidateLayout(BindableObject bindable, object oldValue, object newValue)
         {
             var b = (TwoPaneView)bindable;
@@ -105,10 +105,7 @@ namespace Xamarin.Forms.DualScreen
             }
             else
             {
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    b.UpdateMode();
-                });
+                b._processPendingChange = true;
             }
         }
 
@@ -221,6 +218,7 @@ namespace Xamarin.Forms.DualScreen
                 {
                     _isconnected = true;
                     TwoPaneViewLayoutGuide.WatchForChanges();
+                    TwoPaneViewLayoutGuide.PropertyChanged += OnTwoPaneViewLayoutGuide;
                 }
             }
             else
@@ -229,6 +227,7 @@ namespace Xamarin.Forms.DualScreen
                 {
                     _isconnected = false;
                     TwoPaneViewLayoutGuide.StopWatchingForChanges();
+                    TwoPaneViewLayoutGuide.PropertyChanged -= OnTwoPaneViewLayoutGuide;
                 }
             }
         }
@@ -240,7 +239,6 @@ namespace Xamarin.Forms.DualScreen
                 if (_twoPaneViewLayoutGuide == null)
                 {
                     _twoPaneViewLayoutGuide = new TwoPaneViewLayoutGuide(this);
-                    _twoPaneViewLayoutGuide.PropertyChanged += OnTwoPaneViewLayoutGuide;
                 }
 
                 return _twoPaneViewLayoutGuide;
@@ -249,10 +247,7 @@ namespace Xamarin.Forms.DualScreen
 
         void OnTwoPaneViewLayoutGuide(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(DualScreen.TwoPaneViewLayoutGuide.Mode))
-            {
-                UpdateMode();
-            }
+            UpdateMode();
         }
 
         public bool IsLandscape { get => (bool)GetValue(IsLandscapeProperty); }
@@ -361,7 +356,16 @@ namespace Xamarin.Forms.DualScreen
                 }
 
                 _updatingMode = false;
-                InvalidateLayout();
+
+                if (_processPendingChange)
+                {
+                    _processPendingChange = false;
+                    UpdateMode();
+                }
+                else
+                {
+                    InvalidateLayout();
+                }
             }
             finally
             {
@@ -409,7 +413,7 @@ namespace Xamarin.Forms.DualScreen
                 Rectangle rc1 = _twoPaneViewLayoutGuide.Pane1;
                 Rectangle rc2 = _twoPaneViewLayoutGuide.Pane2;
                 Rectangle hinge = _twoPaneViewLayoutGuide.Hinge;
-
+                                
                 if (TwoPaneViewLayoutGuide.Mode == TwoPaneViewMode.Wide)
                 {
                     _columnMiddle.Width = new GridLength(hinge.Width, GridUnitType.Absolute);

@@ -145,12 +145,12 @@ namespace Xamarin.Forms.DualScreen
 				return new Point(view.View.Context.FromPixels(location[0]), view.View.Context.FromPixels(location[1]));
 			}
 
-			public static bool HasCompactModeSupport()
+			public bool HasCompactModeSupport()
 			{
 				return false;
 			}
 
-			public static Task<CompactModeArgs> OpenCompactMode(ContentPage contentPage)
+			public Task<CompactModeArgs> OpenCompactMode(ContentPage contentPage)
 			{
 				return Task.FromResult(new CompactModeArgs(null, false));
 			}

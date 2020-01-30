@@ -27,27 +27,4 @@
                 ViewToAnimateIn="{Binding Pane2, Converter={StaticResource ViewModelToViewConverter}}"></local:AnimationView>
         </dualScreen:TwoPaneView.Pane2>
     </dualScreen:TwoPaneView>
-
-    <!--<Grid>
-        <dualScreen:TwoPaneView BackgroundColor="Green" x:Name="twoPaneView">
-            <dualScreen:TwoPaneView.Pane1>
-                <Label Text="Left1"></Label>
-
-            </dualScreen:TwoPaneView.Pane1>
-            <dualScreen:TwoPaneView.Pane2>
-                <Label Text="Right1"></Label>
-
-            </dualScreen:TwoPaneView.Pane2>
-        </dualScreen:TwoPaneView>
-        <dualScreen:TwoPaneView HorizontalOptions="Center" VerticalOptions="End" 
-                                BackgroundColor="Purple" 
-                            HeightRequest="200" WidthRequest="200">
-            <dualScreen:TwoPaneView.Pane1>
-                <Label Text="Left2"></Label>
-            </dualScreen:TwoPaneView.Pane1>
-            <dualScreen:TwoPaneView.Pane2>
-                <Label Text="Right2"></Label>
-            </dualScreen:TwoPaneView.Pane2>
-        </dualScreen:TwoPaneView>
-    </Grid>-->
 </ContentPage>
