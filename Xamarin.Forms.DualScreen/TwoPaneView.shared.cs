@@ -275,7 +275,7 @@ namespace Xamarin.Forms.DualScreen
 
                 if (TwoPaneViewLayoutGuide.IsSpanned)
                 {
-                    if (Mode == TwoPaneViewMode.Wide)
+                    if (TwoPaneViewLayoutGuide.IsPortrait)
                     {
                         // Regions are laid out horizontally
                         if (WideModeConfiguration != TwoPaneViewWideModeConfiguration.SinglePane)
@@ -283,7 +283,7 @@ namespace Xamarin.Forms.DualScreen
                             newMode = (WideModeConfiguration == TwoPaneViewWideModeConfiguration.LeftRight) ? ViewMode.LeftRight : ViewMode.RightLeft;
                         }
                     }
-                    else if (Mode == TwoPaneViewMode.Tall)
+                    else if (TwoPaneViewLayoutGuide.IsLandscape)
                     {
                         // Regions are laid out vertically
                         if (TallModeConfiguration != TwoPaneViewTallModeConfiguration.SinglePane)
@@ -329,6 +329,7 @@ namespace Xamarin.Forms.DualScreen
 
                     if (newViewMode != Mode)
                     {
+                        _updatingMode = false;
                         SetValue(ModePropertyKey, newViewMode);
                     }
                 }
@@ -387,7 +388,7 @@ namespace Xamarin.Forms.DualScreen
                 Rectangle rc2 = _twoPaneViewLayoutGuide.Pane2;
                 Rectangle hinge = _twoPaneViewLayoutGuide.Hinge;
 
-                if (Mode == TwoPaneViewMode.Wide)
+                if (_twoPaneViewLayoutGuide.IsPortrait)
                 {
                     _columnMiddle.Width = new GridLength(hinge.Width, GridUnitType.Absolute);
                     _columnLeft.Width = new GridLength(rc1.Width, GridUnitType.Absolute);

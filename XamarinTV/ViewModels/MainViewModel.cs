@@ -12,6 +12,7 @@ namespace XamarinTV.ViewModels
     {
         BaseViewModel _pane1;
         BaseViewModel _pane2;
+        TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide = new TwoPaneViewLayoutGuide();
 
         readonly Lazy<BrowseVideosViewModel> _browseVideosViewModel;
         readonly Lazy<SearchVideosViewModel> _searchVideosViewModel;
@@ -130,20 +131,29 @@ namespace XamarinTV.ViewModels
 
         void UpdateLayouts()
         {
-            Pane2Length = GridLength.Star;
             if (VideoPlayerViewModel.Video != null)
             {
-                MinTallModeHeight = 600;
+                if(Device.RuntimePlatform == Device.UWP)
+                    MinTallModeHeight = 800;
+                else
+                    MinTallModeHeight = 600;
+
                 MinWideModeWidth = 4000;
                 Pane1Length = GridLength.Auto;
+                Pane2Length = GridLength.Star;
                 Pane1 = VideoPlayerViewModel;
                 Pane2 = VideoDetailViewModel;
                 TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
-                WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
+                
+                if (!_twoPaneViewLayoutGuide.IsSpanned)
+                    WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
+                else
+                    WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
             }
             else
             {
                 Pane1Length = new GridLength(2, GridUnitType.Star);
+                Pane2Length = new GridLength(3, GridUnitType.Star);
                 MinTallModeHeight = 0;
                 MinWideModeWidth = 4000;
                 Pane1 = TopVideosViewModel;
