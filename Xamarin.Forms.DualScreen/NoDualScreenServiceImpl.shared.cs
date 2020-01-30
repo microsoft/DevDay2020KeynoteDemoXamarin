@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms.Internals;
 
 namespace Xamarin.Forms.DualScreen
@@ -42,6 +43,16 @@ namespace Xamarin.Forms.DualScreen
         public Point? GetLocationOnScreen(VisualElement visualElement)
         {
             return null;
+        }
+
+        public bool HasCompactModeSupport()
+        {
+            return false;
+        }
+
+        public Task<CompactModeArgs> OpenCompactMode(ContentPage contentPage)
+        {
+            return Task.FromResult(new CompactModeArgs(null, false));
         }
     }
 }

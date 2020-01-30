@@ -13,7 +13,6 @@ namespace XamarinTV.ViewModels
     {
         BaseViewModel _pane1;
         BaseViewModel _pane2;
-        TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
 
         readonly Lazy<BrowseVideosViewModel> _browseVideosViewModel;
         readonly Lazy<SearchVideosViewModel> _searchVideosViewModel;
@@ -46,7 +45,6 @@ namespace XamarinTV.ViewModels
             _searchVideosViewModel = new Lazy<SearchVideosViewModel>(OnCreateSearchVideosViewModel);
             _videoPlayerViewModel = new Lazy<VideoPlayerViewModel>(OnCreateVideoPlayerViewModel);
             _settingsViewModel = new Lazy<SettingsViewModel>(OnCreateSettingsViewModel);
-            _twoPaneViewLayoutGuide = new TwoPaneViewLayoutGuide();
             PlayVideoCommand = new Command<Video>(OnPlayVideo);
             OpenSettingWindowCommand = new Command(OpenSettingWindow);
             UpdateLayouts();

@@ -1,29 +1,36 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Xamarin.Forms.DualScreen
 {
-    public class TwoPaneViewLayoutGuide : INotifyPropertyChanged
+    internal class TwoPaneViewLayoutGuide : INotifyPropertyChanged
     {
+        public static TwoPaneViewLayoutGuide Instance => _twoPaneViewLayoutGuide.Value;
+        static Lazy<TwoPaneViewLayoutGuide> _twoPaneViewLayoutGuide = new Lazy<TwoPaneViewLayoutGuide>(() => new TwoPaneViewLayoutGuide());
+
         IDualScreenService DualScreenService => 
             DependencyService.Get<IDualScreenService>() ?? NoDualScreenServiceImpl.Instance;
 
-        Rectangle hinge;
-        Rectangle leftPane;
-        Rectangle rightPane;
+        Rectangle _hinge;
+        Rectangle _leftPage;
+        Rectangle _rightPane;
         TwoPaneViewMode _mode;
         Layout _layout;
 
-        public TwoPaneViewLayoutGuide()
+        private TwoPaneViewLayoutGuide()
         {
         }
 
         public TwoPaneViewLayoutGuide(Layout layout)
         {
             _layout = layout;
+        }
+
+        public void WatchForChanges()
+        {
+            StopWatchingForChanges();
             DualScreenService.OnScreenChanged += OnScreenChanged;
 
             if (_layout != null)
@@ -32,6 +39,65 @@ namespace Xamarin.Forms.DualScreen
             }
         }
 
+        public void StopWatchingForChanges()
+        {
+            DualScreenService.OnScreenChanged -= OnScreenChanged;
+
+            if (_layout != null)
+            {
+                _layout.SizeChanged -= OnLayoutChanged;
+            }
+        }
+
+        public TwoPaneViewMode Mode
+        {
+            get
+            {
+                return GetTwoPaneViewMode();
+            }
+            set
+            {
+                SetProperty(ref _mode, value);
+            }
+        }
+
+        public Rectangle Pane1
+        {
+            get
+            {
+                return _leftPage;
+            }
+            set
+            {
+                SetProperty(ref _leftPage, value);
+            }
+        }
+
+        public Rectangle Pane2
+        {
+            get
+            {
+                return _rightPane;
+            }
+            set
+            {
+                SetProperty(ref _rightPane, value);
+            }
+        }
+
+        public Rectangle Hinge
+        {
+            get
+            {
+                return _hinge;
+            }
+            set
+            {
+                SetProperty(ref _hinge, value);
+            }
+        }
+
+
         void OnLayoutChanged(object sender, EventArgs e)
         {
             UpdateLayouts();
@@ -39,12 +105,12 @@ namespace Xamarin.Forms.DualScreen
 
         void OnScreenChanged(object sender, EventArgs e)
         {
-            Hinge = DualScreenService.GetHinge();
             UpdateLayouts();
         }
 
         internal void UpdateLayouts()
         {
+            Hinge = DualScreenService.GetHinge();
             Rectangle containerArea;
 
             if (_layout == null)
@@ -114,54 +180,6 @@ namespace Xamarin.Forms.DualScreen
                 return TwoPaneViewMode.Tall;
 
             return TwoPaneViewMode.Wide;
-        }
-
-        public TwoPaneViewMode Mode
-        {
-            get
-            {
-                return GetTwoPaneViewMode();
-            }
-            set
-            {
-                SetProperty(ref _mode, value);
-            }
-        }
-
-        public Rectangle Pane1
-        {
-            get
-            {
-                return leftPane;
-            }
-            set
-            {
-                SetProperty(ref leftPane, value);
-            }
-        }
-
-        public Rectangle Pane2
-        {
-            get
-            {
-                return rightPane;
-            }
-            set
-            {
-                SetProperty(ref rightPane, value);
-            }
-        }
-
-        public Rectangle Hinge
-        {
-            get
-            {
-                return hinge;
-            }
-            set
-            {
-                SetProperty(ref hinge, value);
-            }
         }
 
         protected bool SetProperty<T>(ref T backingStore, T value,
