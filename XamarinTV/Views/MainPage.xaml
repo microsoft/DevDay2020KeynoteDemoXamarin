@@ -10,6 +10,7 @@
     x:Class="XamarinTV.Views.MainPage"
     Visual="Material">
     <dualScreen:TwoPaneView
+        x:Name="twoPaneView"
         Pane1Length="{Binding Pane1Length}"
         Pane2Length="{Binding Pane2Length}"
         MinTallModeHeight="{Binding MinTallModeHeight}"

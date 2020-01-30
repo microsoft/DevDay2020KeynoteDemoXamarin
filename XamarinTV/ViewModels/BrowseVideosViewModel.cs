@@ -7,9 +7,17 @@ namespace XamarinTV.ViewModels
     public class BrowseVideosViewModel : BaseViewModel
     {
         int _selectedViewModelIndex;
+        BaseViewModel _topViewModel;
 
         public BrowseVideosViewModel()
         {
+            TopViewModel = new TopVideosViewModel();
+        }
+
+        public BaseViewModel TopViewModel
+        {
+            get => _topViewModel;
+            set { SetProperty(ref _topViewModel, value); }
         }
 
         public int SelectedViewModelIndex

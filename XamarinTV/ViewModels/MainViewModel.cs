@@ -5,6 +5,7 @@ using XamarinTV.Views;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.DualScreen;
+using System.ComponentModel;
 
 namespace XamarinTV.ViewModels
 {
@@ -12,11 +13,10 @@ namespace XamarinTV.ViewModels
     {
         BaseViewModel _pane1;
         BaseViewModel _pane2;
-        TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide = new TwoPaneViewLayoutGuide();
+        TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
 
         readonly Lazy<BrowseVideosViewModel> _browseVideosViewModel;
         readonly Lazy<SearchVideosViewModel> _searchVideosViewModel;
-        readonly Lazy<TopVideosViewModel> _topVideosViewModel;
         readonly Lazy<VideoPlayerViewModel> _videoPlayerViewModel;
         readonly Lazy<SettingsViewModel> _settingsViewModel;
         readonly Lazy<VideoDetailViewModel> _videoDetailViewModel = new Lazy<VideoDetailViewModel>(() => new VideoDetailViewModel());
@@ -25,7 +25,6 @@ namespace XamarinTV.ViewModels
         public static MainViewModel Instance => _mainViewModel.Value;
         public BrowseVideosViewModel BrowseVideosViewModel => _browseVideosViewModel.Value;
         public SearchVideosViewModel SearchVideosViewModel => _searchVideosViewModel.Value;
-        public TopVideosViewModel TopVideosViewModel => _topVideosViewModel.Value;
         public VideoPlayerViewModel VideoPlayerViewModel => _videoPlayerViewModel.Value;
         public SettingsViewModel SettingsViewModel => _settingsViewModel.Value;
         public VideoDetailViewModel VideoDetailViewModel => _videoDetailViewModel.Value;
@@ -45,10 +44,9 @@ namespace XamarinTV.ViewModels
         {
             _browseVideosViewModel = new Lazy<BrowseVideosViewModel>(OnCreateBrowseVideosViewModel);
             _searchVideosViewModel = new Lazy<SearchVideosViewModel>(OnCreateSearchVideosViewModel);
-            _topVideosViewModel = new Lazy<TopVideosViewModel>(OnCreateTopVideosViewModel);
             _videoPlayerViewModel = new Lazy<VideoPlayerViewModel>(OnCreateVideoPlayerViewModel);
             _settingsViewModel = new Lazy<SettingsViewModel>(OnCreateSettingsViewModel);
-
+            _twoPaneViewLayoutGuide = new TwoPaneViewLayoutGuide();
             PlayVideoCommand = new Command<Video>(OnPlayVideo);
             OpenSettingWindowCommand = new Command(OpenSettingWindow);
             UpdateLayouts();
@@ -129,7 +127,7 @@ namespace XamarinTV.ViewModels
             set => SetProperty(ref pane2Length, value);
         }
 
-        void UpdateLayouts()
+        public void UpdateLayouts()
         {
             if (VideoPlayerViewModel.Video != null)
             {
@@ -156,10 +154,19 @@ namespace XamarinTV.ViewModels
                 Pane2Length = new GridLength(3, GridUnitType.Star);
                 MinTallModeHeight = 0;
                 MinWideModeWidth = 4000;
-                Pane1 = TopVideosViewModel;
-                Pane2 = BrowseVideosViewModel;
-                TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
-                WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
+                Pane1 = BrowseVideosViewModel;
+                Pane2 = SearchVideosViewModel;
+
+                if (!_twoPaneViewLayoutGuide.IsSpanned)
+                {
+                    TallModeConfiguration = TwoPaneViewTallModeConfiguration.SinglePane;
+                    WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
+                }
+                else
+                {
+                    TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
+                    WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
+                }
             }
         }
 
@@ -186,12 +193,6 @@ namespace XamarinTV.ViewModels
         SearchVideosViewModel OnCreateSearchVideosViewModel()
         {
             SearchVideosViewModel viewModel = new SearchVideosViewModel();
-            return viewModel;
-        }
-
-        TopVideosViewModel OnCreateTopVideosViewModel()
-        {
-            TopVideosViewModel viewModel = new TopVideosViewModel();
             return viewModel;
         }
 

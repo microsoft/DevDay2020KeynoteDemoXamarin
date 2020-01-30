@@ -25,7 +25,6 @@ namespace Xamarin.Forms.DualScreen
 
         public TwoPaneViewLayoutGuide()
         {
-
         }
 
         public TwoPaneViewLayoutGuide(Layout layout)

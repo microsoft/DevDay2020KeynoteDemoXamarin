@@ -63,6 +63,13 @@ namespace Xamarin.Forms.DualScreen
             {
                 b.UpdateMode();
             }
+            else
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    b.UpdateMode();
+                });
+            }
         }
 
         public static readonly BindableProperty WideModeConfigurationProperty
@@ -240,7 +247,6 @@ namespace Xamarin.Forms.DualScreen
             else
                 UpdateMode();
         }
-
 
         void UpdateMode()
         {
