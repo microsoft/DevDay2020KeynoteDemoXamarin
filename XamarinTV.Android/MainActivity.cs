@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using FFImageLoading.Forms.Platform;
 using MediaManager;
 using Xamarin.Forms.DualScreen;
+using Sharpnado.Presentation.Forms.Droid;
 
 namespace XamarinTV.Droid
 {
@@ -30,14 +31,14 @@ namespace XamarinTV.Droid
             Forms.SetFlags("IndicatorView_Experimental", "CarouselView_Experimental");
             Forms.Init(this, savedInstanceState); 
             CachedImageRenderer.Init(true);
-            CrossMediaManager.Current.Init(this);
+            CrossMediaManager.Current.Init(this); 
+            SharpnadoInitializer.Initialize();
             LoadApplication(new App());
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }      
     }
