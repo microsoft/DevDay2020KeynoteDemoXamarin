@@ -2,7 +2,6 @@
 <ContentView
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewmodels="clr-namespace:XamarinTV.ViewModels"
     x:Class="XamarinTV.Views.VideoPlayerView"
     BackgroundColor="Transparent">
     <ContentView.Resources>
@@ -52,6 +51,9 @@
                     Property="BackgroundColor"
                     Value="{DynamicResource BackgroundColor}" />
                 <Setter
+                    Property="HeightRequest"
+                    Value="300" />
+                <Setter
                     Property="AutoPlay"
                     Value="True" />
                 <Setter
@@ -86,7 +88,6 @@
     <ContentView.Content>
         <Frame
             HeightRequest="300"
-            BackgroundColor="Black"
             CornerRadius="0">
             <Grid
                 RowSpacing="0">
@@ -98,11 +99,11 @@
                     <RowDefinition
                         Height="*" />
                 </Grid.RowDefinitions>
-                <MediaElement Grid.Row="1" 
-                              x:Name="VideoView"
-                              BackgroundColor="Blue"
-                              Style="{StaticResource VideoPlayerStyle}"/>
-                
+                <MediaElement
+                    Grid.Row="1"
+                    x:Name="MediaElement"
+                    Source="{Binding VideoSource, Converter={StaticResource VideoSourceConverter}}"
+                    Style="{StaticResource VideoPlayerStyle}"/>
                 <Grid
                     Grid.Row="0"
                     Grid.RowSpan="3"

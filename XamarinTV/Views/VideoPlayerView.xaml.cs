@@ -7,8 +7,6 @@ namespace XamarinTV.Views
         public VideoPlayerView()
         {
             InitializeComponent();
-
-            
-        }
+        } 
     }
 }

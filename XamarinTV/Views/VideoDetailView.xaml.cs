@@ -1,5 +1,4 @@
-﻿using XamarinTV.ViewModels;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace XamarinTV.Views
 {

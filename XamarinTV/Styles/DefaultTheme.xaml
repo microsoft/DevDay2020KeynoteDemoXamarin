@@ -12,6 +12,7 @@
 
     <!-- CONVERTERS -->
     <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    <converters:VideoSourceConverter x:Key="VideoSourceConverter" />
     <converters:ViewModelToViewConverter x:Key="ViewModelToViewConverter" />
 
     <!-- FONTS -->

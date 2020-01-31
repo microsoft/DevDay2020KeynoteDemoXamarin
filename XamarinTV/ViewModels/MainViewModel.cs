@@ -1,11 +1,9 @@
 ﻿using XamarinTV.Models;
-using XamarinTV.Services;
 using XamarinTV.ViewModels.Base;
 using XamarinTV.Views;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.DualScreen;
-using System.ComponentModel;
 
 namespace XamarinTV.ViewModels
 {
@@ -13,7 +11,7 @@ namespace XamarinTV.ViewModels
     {
         BaseViewModel _pane1;
         BaseViewModel _pane2;
-        TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
+        readonly TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
 
         readonly Lazy<BrowseVideosViewModel> _browseVideosViewModel;
         readonly Lazy<SearchVideosViewModel> _searchVideosViewModel;
@@ -32,10 +30,10 @@ namespace XamarinTV.ViewModels
         TwoPaneViewTallModeConfiguration _tallModeConfiguration;
         TwoPaneViewWideModeConfiguration _wideModeConfiguration;
         TwoPaneViewMode _twoPaneViewMode;
-        double minWideModeWidth;
-        double minTallModeHeight;
-        private GridLength pane1Length;
-        private GridLength pane2Length;
+        double _minWideModeWidth;
+        double _minTallModeHeight;
+        private GridLength _pane1Length;
+        private GridLength _pane2Length;
 
         public Command<Video> PlayVideoCommand { get; }
         public Command OpenSettingWindowCommand { get; }
@@ -105,26 +103,26 @@ namespace XamarinTV.ViewModels
 
         public double MinWideModeWidth
         {
-            get => minWideModeWidth;
-            set => SetProperty(ref minWideModeWidth, value);
+            get => _minWideModeWidth;
+            set => SetProperty(ref _minWideModeWidth, value);
         }
 
         public double MinTallModeHeight
         {
-            get => minTallModeHeight;
-            set => SetProperty(ref minTallModeHeight, value);
+            get => _minTallModeHeight;
+            set => SetProperty(ref _minTallModeHeight, value);
         }
 
         public GridLength Pane1Length
         {
-            get => pane1Length;
-            set => SetProperty(ref pane1Length, value);
+            get => _pane1Length;
+            set => SetProperty(ref _pane1Length, value);
         }
 
         public GridLength Pane2Length
         {
-            get => pane2Length;
-            set => SetProperty(ref pane2Length, value);
+            get => _pane2Length;
+            set => SetProperty(ref _pane2Length, value);
         }
 
         public void UpdateLayouts()
@@ -205,24 +203,19 @@ namespace XamarinTV.ViewModels
             return viewModel;
         }
 
-        async void OnClosePlayingVideo(object obj)
+        void OnClosePlayingVideo(object obj)
         {
-            // Stop the videos
-            await VideoPlayerViewModel.StopVideoAsync();
-
             VideoPlayerViewModel.Video = null;
             VideoDetailViewModel.SelectedVideo = null;
 
             UpdateLayouts();
         }
 
-        async void OnPlayVideo(Video video)
+        void OnPlayVideo(Video video)
         {
             VideoPlayerViewModel.Video = video;
             VideoDetailViewModel.SelectedVideo = video;
             UpdateLayouts();
-
-            await VideoPlayerViewModel.PlayVideoAsync();
         }
 
         SettingsViewModel OnCreateSettingsViewModel()

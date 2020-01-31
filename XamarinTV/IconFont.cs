@@ -1,5 +1,4 @@
-﻿
-namespace XamarinTV
+﻿namespace XamarinTV
 {
 
     static class IconFont
