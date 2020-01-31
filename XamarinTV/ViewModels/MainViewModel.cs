@@ -125,7 +125,7 @@ namespace XamarinTV.ViewModels
             set => SetProperty(ref pane2Length, value);
         }
 
-        public bool IsSpanned => WindowHelper.GetSpanningRects().Length >= 2;
+        public bool IsSpanned => DualScreenInfo.Current.SpanMode != TwoPaneViewMode.SinglePane;
 
         public void UpdateLayouts()
         {
