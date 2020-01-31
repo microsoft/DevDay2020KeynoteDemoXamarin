@@ -33,8 +33,9 @@ namespace XamarinTV.ViewModels
         TwoPaneViewMode _twoPaneViewMode;
         double minWideModeWidth;
         double minTallModeHeight;
-        private GridLength pane1Length;
-        private GridLength pane2Length;
+        GridLength pane1Length;
+        GridLength pane2Length;
+        bool _settingsActive = false;
 
         public Command<Video> PlayVideoCommand { get; }
         public Command OpenSettingWindowCommand { get; }
@@ -139,7 +140,12 @@ namespace XamarinTV.ViewModels
                 MinWideModeWidth = 4000;
                 Pane1Length = GridLength.Auto;
                 Pane2Length = GridLength.Star;
-                Pane1 = VideoPlayerViewModel;
+
+                if(_settingsActive)
+                    Pane1 = SettingsViewModel;
+                else
+                    Pane1 = VideoPlayerViewModel;
+
                 Pane2 = VideoDetailViewModel;
                 TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
                 
@@ -154,7 +160,12 @@ namespace XamarinTV.ViewModels
                 Pane2Length = new GridLength(3, GridUnitType.Star);
                 MinTallModeHeight = 0;
                 MinWideModeWidth = 4000;
-                Pane1 = BrowseVideosViewModel;
+
+                if (_settingsActive)
+                    Pane1 = SettingsViewModel;
+                else
+                    Pane1 = BrowseVideosViewModel;
+
                 Pane2 = SearchVideosViewModel;
 
                 if (!IsSpanned)
@@ -222,16 +233,18 @@ namespace XamarinTV.ViewModels
         SettingsViewModel OnCreateSettingsViewModel()
         {
             var viewModel = new SettingsViewModel();
-
+            viewModel.CloseCommand = new Command(() =>
+            {
+                _settingsActive = false;
+                UpdateLayouts();
+            });
             return viewModel;
         }
 
         public void OpenSettingWindow()
         {
-            if (SettingsViewModel.CloseCommand == null)
-                SettingsViewModel.CloseCommand = new Command(() => UpdateLayouts());
-
-            Pane1 = SettingsViewModel;
+            _settingsActive = true;
+            UpdateLayouts();
         }
 
         public void OpenVideoPlayerWindow(Video video)
