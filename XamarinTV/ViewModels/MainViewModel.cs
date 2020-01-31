@@ -226,36 +226,12 @@ namespace XamarinTV.ViewModels
             return viewModel;
         }
 
-        public async void OpenSettingWindow()
+        public void OpenSettingWindow()
         {
-            if (!WindowHelper.HasCompactModeSupport())
-            {
-                if (SettingsViewModel.CloseCommand == null)
-                    SettingsViewModel.CloseCommand = new Command(() => UpdateLayouts());
+            if (SettingsViewModel.CloseCommand == null)
+                SettingsViewModel.CloseCommand = new Command(() => UpdateLayouts());
 
-                Pane1 = SettingsViewModel;
-                return;
-            }
-
-            if (SettingsViewModel.CloseCommand != null)
-                return;
-
-            Views.SettingsView settingsView = new SettingsView()
-            {
-            };
-
-            var closeMeArgs = await WindowHelper.OpenCompactMode(new ContentPage()
-            {
-                Content = settingsView
-            });
-
-            SettingsViewModel.CloseCommand = new Command(async () =>
-            {
-                SettingsViewModel.CloseCommand = null;
-                await closeMeArgs.Close();
-            });
-
-            settingsView.BindingContext = SettingsViewModel;
+            Pane1 = SettingsViewModel;
         }
 
         public void OpenVideoPlayerWindow(Video video)

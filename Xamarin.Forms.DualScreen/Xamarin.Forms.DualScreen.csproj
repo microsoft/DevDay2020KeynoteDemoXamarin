@@ -1,5 +1,4 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras">
-
   <PropertyGroup>
     <RootNamespace>Xamarin.Forms.DualScreen</RootNamespace>
     <AssemblyName>Xamarin.Forms.DualScreen</AssemblyName>
