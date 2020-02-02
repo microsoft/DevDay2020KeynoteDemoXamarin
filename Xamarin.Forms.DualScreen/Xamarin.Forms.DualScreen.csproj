@@ -3,14 +3,20 @@
     <RootNamespace>Xamarin.Forms.DualScreen</RootNamespace>
     <AssemblyName>Xamarin.Forms.DualScreen</AssemblyName>
     <PackageId>Xamarin.Forms.DualScreen</PackageId>
-    <TargetFrameworks>netstandard1.0;netstandard2.0;MonoAndroid10.0</TargetFrameworks>
-    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);uap10.0.16299;</TargetFrameworks>
-    <TargetPlatformVersion Condition="$(TargetFramework.StartsWith('uap10.0'))">10.0.18362.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion Condition="$(TargetFramework.StartsWith('uap10.0'))">10.0.16299.0</TargetPlatformMinVersion>
+    
+    
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">uap10.0.14393;uap10.0.16299;</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);MonoAndroid90;MonoAndroid10.0;netstandard1.0;netstandard2.0</TargetFrameworks>
+    <TargetPlatformVersion Condition="$(TargetFramework) == 'uap10.0.14393'">10.0.18362.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition="$(TargetFramework) == 'uap10.0.16299'">10.0.18362.0</TargetPlatformVersion>
+    
+    
+    <SkipMicrosoftUIXamlCheckTargetPlatformVersion>true</SkipMicrosoftUIXamlCheckTargetPlatformVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <XamarinAndroidSupportSkipVerifyVersions>true</XamarinAndroidSupportSkipVerifyVersions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,17 +36,13 @@
     </ProjectReference>-->
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('uap10.0')) ">
-    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.0.15" />
     <Compile Include="**\*.uwp.cs" />
     <Compile Include="**\*.uwp.*.cs" />
-    <SDKReference Include="WindowsMobile, Version=10.0.18362.0">
-      <Name>Windows Mobile Extensions for the UWP</Name>
-    </SDKReference>
     <!--<ProjectReference Include="..\Xamarin.Forms.Platform.UAP\Xamarin.Forms.Platform.UAP.csproj">
     </ProjectReference>-->
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.6.0.198-nightly" />
+    <PackageReference Include="Xamarin.Forms" Version="4.6.0.228-nightly" />
   </ItemGroup>
   <ItemGroup Condition=" $(TargetFramework.StartsWith('MonoAndroid')) ">
     <Compile Include="**\*.android.cs" />
@@ -68,5 +70,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Condition="'$(CI)' == 'true'" Include="Xamarin.Build.TypeRedirector" Version="0.1.2-preview" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'uap10.0.14393' AND  '$(OS)' == 'Windows_NT' ">
+    <PackageReference Include="NETStandard.Library" Version="2.0.1" />
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('uap10.0')) AND  '$(OS)' == 'Windows_NT' ">
+    <SDKReference Include="WindowsMobile, Version=10.0.18362.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
+  </ItemGroup>
+  <ItemGroup Condition="$(TargetFramework.StartsWith('uap10.0')) AND '$(OS)' == 'Windows_NT' ">
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.0.15" />
   </ItemGroup>
 </Project>
