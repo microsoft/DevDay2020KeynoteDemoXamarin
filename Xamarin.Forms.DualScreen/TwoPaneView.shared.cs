@@ -31,7 +31,18 @@ namespace Xamarin.Forms.DualScreen
     [ContentProperty("")]
     public class TwoPaneView : Grid
     {
-        enum ViewMode
+
+		static TwoPaneView()
+		{
+#if UWP
+			// Without this the service gets linked out when compiling with the native tool chain on UWP
+			DependencyService.Register<DualScreenService>();
+#elif !ANDROID
+			DependencyService.Register<NoDualScreenServiceImpl>();
+#endif
+		}
+
+		enum ViewMode
         {
             Pane1Only,
             Pane2Only,
@@ -42,7 +53,10 @@ namespace Xamarin.Forms.DualScreen
             None
         };
 
-        TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
+		IDualScreenService DualScreenService =>
+			DependencyService.Get<IDualScreenService>() ?? NoDualScreenServiceImpl.Instance;
+
+		TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
         VisualStateGroup _modeStates;
         ContentView _content1;
         ContentView _content2;
@@ -275,7 +289,7 @@ namespace Xamarin.Forms.DualScreen
 
                 ViewMode newMode = (PanePriority == TwoPaneViewPriority.Pane1) ? ViewMode.Pane1Only : ViewMode.Pane2Only;
 
-                var screenLocation = DependencyService.Get<IDualScreenService>().GetLocationOnScreen(this);
+                var screenLocation = DualScreenService.GetLocationOnScreen(this);
                 if (screenLocation == null)
                     return;
 

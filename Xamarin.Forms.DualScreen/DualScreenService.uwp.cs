@@ -3,7 +3,11 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.Graphics.Display;
 using Windows.UI.ViewManagement;
+
+#if UWP_18362
 using Windows.UI.WindowManagement;
+#endif
+
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Xamarin.Forms;
@@ -14,11 +18,13 @@ using Xamarin.Forms.Platform.UWP;
 namespace Xamarin.Forms.DualScreen
 {
     internal class DualScreenService : IDualScreenService
-    {
-        public event EventHandler OnScreenChanged;
+	{
+#pragma warning disable CS0067
+		public event EventHandler OnScreenChanged;
         public event PropertyChangedEventHandler PropertyChanged;
+#pragma warning restore CS0067
 
-        public DualScreenService()
+		public DualScreenService()
         {
         }
 
@@ -84,6 +90,8 @@ namespace Xamarin.Forms.DualScreen
         }
 
 
+#if UWP_18362
+
         public bool HasCompactModeSupport()
         {
             return ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
@@ -143,5 +151,14 @@ namespace Xamarin.Forms.DualScreen
 
             return args;
         }
-    }
+#else
+
+		public bool HasCompactModeSupport() => NoDualScreenServiceImpl.Instance.HasCompactModeSupport();
+
+		public Task<CompactModeArgs> OpenCompactMode(ContentPage contentPage) =>
+			NoDualScreenServiceImpl.Instance.OpenCompactMode(contentPage);
+
+#endif
+
+	}
 }
