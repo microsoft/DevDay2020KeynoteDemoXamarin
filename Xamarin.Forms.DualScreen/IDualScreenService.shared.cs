@@ -12,7 +12,5 @@ namespace Xamarin.Forms.DualScreen
 		bool IsLandscape { get; }
 		Rectangle GetHinge();
 		Point? GetLocationOnScreen(VisualElement visualElement);
-		bool HasCompactModeSupport();
-		Task<CompactModeArgs> OpenCompactMode(ContentPage contentPage);
 	}
 }

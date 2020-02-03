@@ -29,18 +29,8 @@ namespace Xamarin.Forms.DualScreen
     }
 
     [ContentProperty("")]
-    public class TwoPaneView : Grid
+    public partial class TwoPaneView : Grid
 	{
-
-		static TwoPaneView()
-		{
-#if UWP
-			// Without this the service gets linked out when compiling with the native tool chain on UWP
-			DependencyService.Register<DualScreenService>();
-#elif !ANDROID
-			DependencyService.Register<NoDualScreenServiceImpl>();
-#endif
-		}
 
 		enum ViewMode
         {
@@ -228,31 +218,6 @@ namespace Xamarin.Forms.DualScreen
 
             this.RowDefinitions = new RowDefinitionCollection() { new RowDefinition(), new RowDefinition(), new RowDefinition() };
             this.ColumnDefinitions = new ColumnDefinitionCollection() { new ColumnDefinition(), new ColumnDefinition(), new ColumnDefinition() };
-        }
-
-        //TODO replace with OnIsPlatformEnabledChanged once we have NUGET and IVT is turned on
-        bool _isconnected = false;
-        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            base.OnPropertyChanged(propertyName);
-            if (IsPlatformEnabled)
-            {
-                if(!_isconnected)
-                {
-                    _isconnected = true;
-                    TwoPaneViewLayoutGuide.WatchForChanges();
-                    TwoPaneViewLayoutGuide.PropertyChanged += OnTwoPaneViewLayoutGuide;
-                }
-            }
-            else
-            {
-                if (_isconnected)
-                {
-                    _isconnected = false;
-                    TwoPaneViewLayoutGuide.StopWatchingForChanges();
-                    TwoPaneViewLayoutGuide.PropertyChanged -= OnTwoPaneViewLayoutGuide;
-                }
-            }
         }
 
         TwoPaneViewLayoutGuide TwoPaneViewLayoutGuide
