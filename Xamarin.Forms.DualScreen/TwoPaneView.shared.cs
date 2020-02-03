@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace Xamarin.Forms.DualScreen
 {
@@ -31,8 +30,7 @@ namespace Xamarin.Forms.DualScreen
     [ContentProperty("")]
     public partial class TwoPaneView : Grid
 	{
-
-		enum ViewMode
+        enum ViewMode
         {
             Pane1Only,
             Pane2Only,
@@ -42,9 +40,6 @@ namespace Xamarin.Forms.DualScreen
             BottomTop,
             None
         };
-
-		IDualScreenService DualScreenService =>
-			DependencyService.Get<IDualScreenService>() ?? NoDualScreenServiceImpl.Instance;
 
 		TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
 		VisualStateGroup _modeStates;
@@ -57,7 +52,7 @@ namespace Xamarin.Forms.DualScreen
         bool _processPendingChange = false;
 
         public static readonly BindableProperty TallModeConfigurationProperty
-            = BindableProperty.Create("TallModeConfiguration", typeof(TwoPaneViewTallModeConfiguration), typeof(TwoPaneView), defaultValue: TwoPaneViewTallModeConfiguration.SinglePane, propertyChanged: OnJustInvalidateLayout);
+            = BindableProperty.Create("TallModeConfiguration", typeof(TwoPaneViewTallModeConfiguration), typeof(TwoPaneView), defaultValue: TwoPaneViewTallModeConfiguration.TopBottom, propertyChanged: OnJustInvalidateLayout);
 
         public static readonly BindableProperty WideModeConfigurationProperty
             = BindableProperty.Create("WideModeConfiguration", typeof(TwoPaneViewWideModeConfiguration), typeof(TwoPaneView), defaultValue: TwoPaneViewWideModeConfiguration.LeftRight, propertyChanged: OnJustInvalidateLayout);
@@ -72,11 +67,6 @@ namespace Xamarin.Forms.DualScreen
             = BindableProperty.CreateReadOnly("Mode", typeof(TwoPaneViewMode), typeof(TwoPaneView), defaultValue: TwoPaneViewMode.SinglePane, propertyChanged: OnModePropertyChanged);
         
         public static readonly BindableProperty ModeProperty = ModePropertyKey.BindableProperty;
-
-        public static readonly BindablePropertyKey IsLandscapePropertyKey
-            = BindableProperty.CreateReadOnly("IsLandscape", typeof(bool), typeof(TwoPaneView), defaultValue: false);
-
-        public static readonly BindableProperty IsLandscapeProperty = IsLandscapePropertyKey.BindableProperty;
 
         public static readonly BindableProperty PanePriorityProperty
             = BindableProperty.Create("PanePriority", typeof(TwoPaneViewPriority), typeof(TwoPaneView), defaultValue: TwoPaneViewPriority.Pane1, propertyChanged: OnJustInvalidateLayout);
@@ -174,7 +164,7 @@ namespace Xamarin.Forms.DualScreen
         public View Pane1
         {
             get { return (View)GetValue(Pane1Property); }
-            set { SetValue(Pane2Property, value); }
+            set { SetValue(Pane1Property, value); }
         }
 
         public View Pane2
@@ -237,10 +227,6 @@ namespace Xamarin.Forms.DualScreen
         {
             UpdateMode();
         }
-
-        public bool IsLandscape { get => (bool)GetValue(IsLandscapeProperty); }
-
-        public bool IsPortrait => !IsLandscape;
 
         protected override void LayoutChildren(double x, double y, double width, double height)
         {
