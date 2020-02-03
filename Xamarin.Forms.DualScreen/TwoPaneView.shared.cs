@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using Xamarin.Forms;
 
 namespace Xamarin.Forms.DualScreen
 {
@@ -32,8 +30,19 @@ namespace Xamarin.Forms.DualScreen
 
     [ContentProperty("")]
     public class TwoPaneView : Grid
-    {
-        enum ViewMode
+	{
+
+		static TwoPaneView()
+		{
+#if UWP
+			// Without this the service gets linked out when compiling with the native tool chain on UWP
+			DependencyService.Register<DualScreenService>();
+#elif !ANDROID
+			DependencyService.Register<NoDualScreenServiceImpl>();
+#endif
+		}
+
+		enum ViewMode
         {
             Pane1Only,
             Pane2Only,
@@ -44,33 +53,21 @@ namespace Xamarin.Forms.DualScreen
             None
         };
 
-        TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
-        VisualStateGroup _modeStates;
-        ContentView _content1;
-        ContentView _content2;
+		IDualScreenService DualScreenService =>
+			DependencyService.Get<IDualScreenService>() ?? NoDualScreenServiceImpl.Instance;
+
+		TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
+		VisualStateGroup _modeStates;
+		ContentView _content1;
+		ContentView _content2;
         ViewMode _currentMode;
         bool _hasMeasured = false;
         bool _updatingMode = false;
         bool _performingLayout = false;
+        bool _processPendingChange = false;
 
         public static readonly BindableProperty TallModeConfigurationProperty
             = BindableProperty.Create("TallModeConfiguration", typeof(TwoPaneViewTallModeConfiguration), typeof(TwoPaneView), defaultValue: TwoPaneViewTallModeConfiguration.SinglePane, propertyChanged: OnJustInvalidateLayout);
-
-        static void OnJustInvalidateLayout(BindableObject bindable, object oldValue, object newValue)
-        {
-            var b = (TwoPaneView)bindable;
-            if (!b._performingLayout && !b._updatingMode)
-            {
-                b.UpdateMode();
-            }
-            else
-            {
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    b.UpdateMode();
-                });
-            }
-        }
 
         public static readonly BindableProperty WideModeConfigurationProperty
             = BindableProperty.Create("WideModeConfiguration", typeof(TwoPaneViewWideModeConfiguration), typeof(TwoPaneView), defaultValue: TwoPaneViewWideModeConfiguration.LeftRight, propertyChanged: OnJustInvalidateLayout);
@@ -81,17 +78,9 @@ namespace Xamarin.Forms.DualScreen
         public static readonly BindableProperty Pane2Property
             = BindableProperty.Create("Pane2", typeof(View), typeof(TwoPaneView), propertyChanged: (b, o, n) => OnPanePropertyChanged(b, o, n, 1));
 
-        public static readonly BindableProperty PanePriorityProperty
-            = BindableProperty.Create("PanePriority", typeof(TwoPaneViewPriority), typeof(TwoPaneView), defaultValue: TwoPaneViewPriority.Pane1, propertyChanged: OnJustInvalidateLayout);
-
         public static readonly BindablePropertyKey ModePropertyKey
             = BindableProperty.CreateReadOnly("Mode", typeof(TwoPaneViewMode), typeof(TwoPaneView), defaultValue: TwoPaneViewMode.SinglePane, propertyChanged: OnModePropertyChanged);
-
-        static void OnModePropertyChanged(BindableObject bindable, object oldValue, object newValue)
-        {
-            ((TwoPaneView)bindable).ModeChanged?.Invoke(bindable, EventArgs.Empty);
-        }
-
+        
         public static readonly BindableProperty ModeProperty = ModePropertyKey.BindableProperty;
 
         public static readonly BindablePropertyKey IsLandscapePropertyKey
@@ -99,24 +88,54 @@ namespace Xamarin.Forms.DualScreen
 
         public static readonly BindableProperty IsLandscapeProperty = IsLandscapePropertyKey.BindableProperty;
 
-        public static readonly BindableProperty MinTallModeHeightProperty
-            = BindableProperty.Create("MinTallModeHeight", typeof(double), typeof(TwoPaneView));
+        public static readonly BindableProperty PanePriorityProperty
+            = BindableProperty.Create("PanePriority", typeof(TwoPaneViewPriority), typeof(TwoPaneView), defaultValue: TwoPaneViewPriority.Pane1, propertyChanged: OnJustInvalidateLayout);
 
-        public static readonly BindableProperty MinWideModeWidthProperty
-            = BindableProperty.Create("MinWideModeWidth", typeof(double), typeof(TwoPaneView));
+        public static readonly BindableProperty MinTallModeHeightProperty
+            = BindableProperty.Create("MinTallModeHeight", typeof(double), typeof(TwoPaneView), defaultValueCreator:OnMinModePropertyCreate, propertyChanged: OnJustInvalidateLayout);
+
+		public static readonly BindableProperty MinWideModeWidthProperty
+            = BindableProperty.Create("MinWideModeWidth", typeof(double), typeof(TwoPaneView), defaultValueCreator: OnMinModePropertyCreate, propertyChanged: OnJustInvalidateLayout);
 
         public static readonly BindableProperty Pane1LengthProperty
-            = BindableProperty.Create("Pane1Length", typeof(GridLength), typeof(TwoPaneView), defaultValue: GridLength.Star);
+            = BindableProperty.Create("Pane1Length", typeof(GridLength), typeof(TwoPaneView), defaultValue: GridLength.Star, propertyChanged: OnJustInvalidateLayout);
 
         public static readonly BindableProperty Pane2LengthProperty
-            = BindableProperty.Create("Pane2Length", typeof(GridLength), typeof(TwoPaneView), defaultValue: GridLength.Star);
+            = BindableProperty.Create("Pane2Length", typeof(GridLength), typeof(TwoPaneView), defaultValue: GridLength.Star, propertyChanged: OnJustInvalidateLayout);
 
         public event EventHandler ModeChanged;
+
+		static object OnMinModePropertyCreate(BindableObject bindable)
+		{
+			if (Device.info == null)
+				return 641;
+
+			return 641 / Device.info.ScalingFactor;
+		}
+
+
+		static void OnModePropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            ((TwoPaneView)bindable).ModeChanged?.Invoke(bindable, EventArgs.Empty);
+        }
+
+        static void OnJustInvalidateLayout(BindableObject bindable, object oldValue, object newValue)
+        {
+            var b = (TwoPaneView)bindable;
+            if (!b._performingLayout && !b._updatingMode)
+            {
+                b.UpdateMode();
+            }
+            else
+            {
+                b._processPendingChange = true;
+            }
+        }
 
         static void OnPanePropertyChanged(BindableObject bindable, object oldValue, object newValue, int paneIndex)
         {
             TwoPaneView twoPaneView = (TwoPaneView)bindable;
-            View newView = (View)newValue;
+			var newView = (View)newValue;
 
             if (paneIndex == 0)
                 twoPaneView._content1.Content = newView;
@@ -185,8 +204,8 @@ namespace Xamarin.Forms.DualScreen
             _content1 = new ContentView();
             _content2 = new ContentView();
 
-            Children.Add(_content1);
-            Children.Add(_content2);
+			Children.Add(_content1);
+			Children.Add(_content2);
 
             this.VerticalOptions = LayoutOptions.Fill;
             this.HorizontalOptions = LayoutOptions.Fill;
@@ -198,17 +217,42 @@ namespace Xamarin.Forms.DualScreen
                 Name = "ModeStates"
             };
 
-            _modeStates.States.Add(new VisualState() { Name = "ViewMode_OneOnly" });
-            _modeStates.States.Add(new VisualState() { Name = "ViewMode_TwoOnly" });
-            _modeStates.States.Add(new VisualState() { Name = "ViewMode_LeftRight" });
-            _modeStates.States.Add(new VisualState() { Name = "ViewMode_RightLeft" });
-            _modeStates.States.Add(new VisualState() { Name = "ViewMode_TopBottom" });
-            _modeStates.States.Add(new VisualState() { Name = "ViewMode_BottomTop" });
+			_modeStates.States.Add(new VisualState() { Name = "ViewMode_OneOnly" });
+			_modeStates.States.Add(new VisualState() { Name = "ViewMode_TwoOnly" });
+			_modeStates.States.Add(new VisualState() { Name = "ViewMode_LeftRight" });
+			_modeStates.States.Add(new VisualState() { Name = "ViewMode_RightLeft" });
+			_modeStates.States.Add(new VisualState() { Name = "ViewMode_TopBottom" });
+			_modeStates.States.Add(new VisualState() { Name = "ViewMode_BottomTop" });
 
-            VisualStateManager.SetVisualStateGroups(this, new VisualStateGroupList() { _modeStates });
+			VisualStateManager.SetVisualStateGroups(this, new VisualStateGroupList() { _modeStates });
 
             this.RowDefinitions = new RowDefinitionCollection() { new RowDefinition(), new RowDefinition(), new RowDefinition() };
             this.ColumnDefinitions = new ColumnDefinitionCollection() { new ColumnDefinition(), new ColumnDefinition(), new ColumnDefinition() };
+        }
+
+        //TODO replace with OnIsPlatformEnabledChanged once we have NUGET and IVT is turned on
+        bool _isconnected = false;
+        protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            base.OnPropertyChanged(propertyName);
+            if (IsPlatformEnabled)
+            {
+                if(!_isconnected)
+                {
+                    _isconnected = true;
+                    TwoPaneViewLayoutGuide.WatchForChanges();
+                    TwoPaneViewLayoutGuide.PropertyChanged += OnTwoPaneViewLayoutGuide;
+                }
+            }
+            else
+            {
+                if (_isconnected)
+                {
+                    _isconnected = false;
+                    TwoPaneViewLayoutGuide.StopWatchingForChanges();
+                    TwoPaneViewLayoutGuide.PropertyChanged -= OnTwoPaneViewLayoutGuide;
+                }
+            }
         }
 
         TwoPaneViewLayoutGuide TwoPaneViewLayoutGuide
@@ -218,7 +262,6 @@ namespace Xamarin.Forms.DualScreen
                 if (_twoPaneViewLayoutGuide == null)
                 {
                     _twoPaneViewLayoutGuide = new TwoPaneViewLayoutGuide(this);
-                    _twoPaneViewLayoutGuide.PropertyChanged += OnTwoPaneViewLayoutGuide;
                 }
 
                 return _twoPaneViewLayoutGuide;
@@ -227,10 +270,7 @@ namespace Xamarin.Forms.DualScreen
 
         void OnTwoPaneViewLayoutGuide(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(DualScreen.TwoPaneViewLayoutGuide.IsLandscape) || e.PropertyName == nameof(DualScreen.TwoPaneViewLayoutGuide.IsSpanned))
-            {
-                UpdateMode();
-            }
+            UpdateMode();
         }
 
         public bool IsLandscape { get => (bool)GetValue(IsLandscapeProperty); }
@@ -258,28 +298,13 @@ namespace Xamarin.Forms.DualScreen
 
                 ViewMode newMode = (PanePriority == TwoPaneViewPriority.Pane1) ? ViewMode.Pane1Only : ViewMode.Pane2Only;
 
-                var screenLocation = DependencyService.Get<IDualScreenService>().GetLocationOnScreen(this);
-                if (screenLocation == null)
-                    return;
-
                 _hasMeasured = true;
 
                 this.TwoPaneViewLayoutGuide.UpdateLayouts();
-                if (!IsSet(MinTallModeHeightProperty))
-                {
-                    // This is the value UWP picks to switch between compact mode
-                    SetValue(MinTallModeHeightProperty, 641 / Device.info.ScalingFactor);
-                }
 
-                if (!IsSet(MinWideModeWidthProperty))
+                if (TwoPaneViewLayoutGuide.Mode != TwoPaneViewMode.SinglePane)
                 {
-                    // This is the value UWP picks to switch between compact mode
-                    SetValue(MinTallModeHeightProperty, 641 / Device.info.ScalingFactor);
-                }
-
-                if (TwoPaneViewLayoutGuide.IsSpanned)
-                {
-                    if (TwoPaneViewLayoutGuide.IsPortrait)
+                    if (TwoPaneViewLayoutGuide.Mode == TwoPaneViewMode.Wide)
                     {
                         // Regions are laid out horizontally
                         if (WideModeConfiguration != TwoPaneViewWideModeConfiguration.SinglePane)
@@ -287,7 +312,7 @@ namespace Xamarin.Forms.DualScreen
                             newMode = (WideModeConfiguration == TwoPaneViewWideModeConfiguration.LeftRight) ? ViewMode.LeftRight : ViewMode.RightLeft;
                         }
                     }
-                    else if (TwoPaneViewLayoutGuide.IsLandscape)
+                    else if (TwoPaneViewLayoutGuide.Mode == TwoPaneViewMode.Tall)
                     {
                         // Regions are laid out vertically
                         if (TallModeConfiguration != TwoPaneViewTallModeConfiguration.SinglePane)
@@ -323,12 +348,18 @@ namespace Xamarin.Forms.DualScreen
 
                     switch (_currentMode)
                     {
-                        case ViewMode.Pane1Only: VisualStateManager.GoToState(this, "ViewMode_OneOnly"); break;
-                        case ViewMode.Pane2Only: VisualStateManager.GoToState(this, "ViewMode_TwoOnly"); break;
-                        case ViewMode.LeftRight: VisualStateManager.GoToState(this, "ViewMode_LeftRight"); newViewMode = TwoPaneViewMode.Wide; break;
-                        case ViewMode.RightLeft: VisualStateManager.GoToState(this, "ViewMode_RightLeft"); newViewMode = TwoPaneViewMode.Wide; break;
-                        case ViewMode.TopBottom: VisualStateManager.GoToState(this, "ViewMode_TopBottom"); newViewMode = TwoPaneViewMode.Tall; break;
-                        case ViewMode.BottomTop: VisualStateManager.GoToState(this, "ViewMode_BottomTop"); newViewMode = TwoPaneViewMode.Tall; break;
+                        case ViewMode.Pane1Only:
+							VisualStateManager.GoToState(this, "ViewMode_OneOnly"); break;
+                        case ViewMode.Pane2Only:
+							VisualStateManager.GoToState(this, "ViewMode_TwoOnly"); break;
+                        case ViewMode.LeftRight:
+							VisualStateManager.GoToState(this, "ViewMode_LeftRight"); newViewMode = TwoPaneViewMode.Wide; break;
+                        case ViewMode.RightLeft:
+							VisualStateManager.GoToState(this, "ViewMode_RightLeft"); newViewMode = TwoPaneViewMode.Wide; break;
+                        case ViewMode.TopBottom:
+							VisualStateManager.GoToState(this, "ViewMode_TopBottom"); newViewMode = TwoPaneViewMode.Tall; break;
+                        case ViewMode.BottomTop:
+							VisualStateManager.GoToState(this, "ViewMode_BottomTop"); newViewMode = TwoPaneViewMode.Tall; break;
                     }
 
                     if (newViewMode != Mode)
@@ -339,7 +370,16 @@ namespace Xamarin.Forms.DualScreen
                 }
 
                 _updatingMode = false;
-                InvalidateLayout();
+
+                if (_processPendingChange)
+                {
+                    _processPendingChange = false;
+                    UpdateMode();
+                }
+                else
+                {
+                    InvalidateLayout();
+                }
             }
             finally
             {
@@ -357,11 +397,9 @@ namespace Xamarin.Forms.DualScreen
             var _rowMiddle = RowDefinitions[1];
             var _rowBottom = RowDefinitions[2];
 
-            // Reset split lengths
             _columnMiddle.Width = new GridLength(0, GridUnitType.Absolute);
             _rowMiddle.Height = new GridLength(0, GridUnitType.Absolute);
 
-            // Set columns lengths
             if (newMode == ViewMode.LeftRight || newMode == ViewMode.RightLeft)
             {
                 _columnLeft.Width = ((newMode == ViewMode.LeftRight) ? Pane1Length : Pane2Length);
@@ -373,7 +411,6 @@ namespace Xamarin.Forms.DualScreen
                 _columnRight.Width = new GridLength(0, GridUnitType.Absolute);
             }
 
-            // Set row lengths
             if (newMode == ViewMode.TopBottom || newMode == ViewMode.BottomTop)
             {
                 _rowTop.Height = ((newMode == ViewMode.TopBottom) ? Pane1Length : Pane2Length);
@@ -385,14 +422,13 @@ namespace Xamarin.Forms.DualScreen
                 _rowBottom.Height = new GridLength(0, GridUnitType.Absolute);
             }
 
-            // Handle regions
-            if (TwoPaneViewLayoutGuide.IsSpanned && newMode != ViewMode.Pane1Only && newMode != ViewMode.Pane2Only)
+            if (TwoPaneViewLayoutGuide.Mode != TwoPaneViewMode.SinglePane && newMode != ViewMode.Pane1Only && newMode != ViewMode.Pane2Only)
             {
-                Rectangle rc1 = _twoPaneViewLayoutGuide.Pane1;
-                Rectangle rc2 = _twoPaneViewLayoutGuide.Pane2;
-                Rectangle hinge = _twoPaneViewLayoutGuide.Hinge;
-
-                if (_twoPaneViewLayoutGuide.IsPortrait)
+				Rectangle rc1 = _twoPaneViewLayoutGuide.Pane1;
+				Rectangle rc2 = _twoPaneViewLayoutGuide.Pane2;
+				Rectangle hinge = _twoPaneViewLayoutGuide.Hinge;
+                                
+                if (TwoPaneViewLayoutGuide.Mode == TwoPaneViewMode.Wide)
                 {
                     _columnMiddle.Width = new GridLength(hinge.Width, GridUnitType.Absolute);
                     _columnLeft.Width = new GridLength(rc1.Width, GridUnitType.Absolute);
@@ -448,8 +484,8 @@ namespace Xamarin.Forms.DualScreen
                 if (bo == null)
                     return;
 
-                Grid.SetColumn(bo, column);
-                Grid.SetRow(bo, row);
+				Grid.SetColumn(bo, column);
+				Grid.SetRow(bo, row);
             }
         }
     }

@@ -65,9 +65,8 @@ namespace XamarinTV.ViewModels
         {
             OpenSourceList = new List<OpenSource>()
             {
-                new OpenSource { Title = "Xamarin Forms", Url = "https://docs.microsoft.com/en-us/xamarin/xamarin-forms/" },
-                new OpenSource { Title = "Xamarin Essentials", Url = "https://github.com/xamarin/Essentials" },
-                new OpenSource { Title = "AsyncAwaitBestPractices", Url = "https://github.com/brminnick/AsyncAwaitBestPractices" },
+                new OpenSource { Title = "Xamarin.Forms", Url = "https://docs.microsoft.com/xamarin/xamarin-forms/" },
+                new OpenSource { Title = "Xamarin.Essentials", Url = "https://github.com/xamarin/Essentials" },
                 new OpenSource { Title = "FFImageLoading", Url = "https://github.com/luberda-molinet/FFImageLoading" },
                 new OpenSource { Title = "PancakeView", Url = "https://github.com/sthewissen/Xamarin.Forms.PancakeView" },
                 new OpenSource { Title = "Sharpnado", Url = "https://github.com/roubachof/Sharpnado.Presentation.Forms" },

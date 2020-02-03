@@ -11,7 +11,6 @@ namespace XamarinTV.ViewModels
     {
         BaseViewModel _pane1;
         BaseViewModel _pane2;
-        readonly TwoPaneViewLayoutGuide _twoPaneViewLayoutGuide;
 
         readonly Lazy<BrowseVideosViewModel> _browseVideosViewModel;
         readonly Lazy<SearchVideosViewModel> _searchVideosViewModel;
@@ -34,6 +33,7 @@ namespace XamarinTV.ViewModels
         double _minTallModeHeight;
         private GridLength _pane1Length;
         private GridLength _pane2Length;
+        bool _settingsActive = false;
 
         public Command<Video> PlayVideoCommand { get; }
         public Command OpenSettingWindowCommand { get; }
@@ -44,7 +44,6 @@ namespace XamarinTV.ViewModels
             _searchVideosViewModel = new Lazy<SearchVideosViewModel>(OnCreateSearchVideosViewModel);
             _videoPlayerViewModel = new Lazy<VideoPlayerViewModel>(OnCreateVideoPlayerViewModel);
             _settingsViewModel = new Lazy<SettingsViewModel>(OnCreateSettingsViewModel);
-            _twoPaneViewLayoutGuide = new TwoPaneViewLayoutGuide();
             PlayVideoCommand = new Command<Video>(OnPlayVideo);
             OpenSettingWindowCommand = new Command(OpenSettingWindow);
             UpdateLayouts();
@@ -125,6 +124,8 @@ namespace XamarinTV.ViewModels
             set => SetProperty(ref _pane2Length, value);
         }
 
+        public bool IsSpanned => DualScreenInfo.Current.SpanMode != TwoPaneViewMode.SinglePane;
+
         public void UpdateLayouts()
         {
             if (VideoPlayerViewModel.Video != null)
@@ -137,11 +138,16 @@ namespace XamarinTV.ViewModels
                 MinWideModeWidth = 4000;
                 Pane1Length = GridLength.Auto;
                 Pane2Length = GridLength.Star;
-                Pane1 = VideoPlayerViewModel;
+
+                if(_settingsActive)
+                    Pane1 = SettingsViewModel;
+                else
+                    Pane1 = VideoPlayerViewModel;
+
                 Pane2 = VideoDetailViewModel;
                 TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
                 
-                if (!_twoPaneViewLayoutGuide.IsSpanned)
+                if (!IsSpanned)
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
                 else
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
@@ -152,10 +158,15 @@ namespace XamarinTV.ViewModels
                 Pane2Length = new GridLength(3, GridUnitType.Star);
                 MinTallModeHeight = 0;
                 MinWideModeWidth = 4000;
-                Pane1 = BrowseVideosViewModel;
+
+                if (_settingsActive)
+                    Pane1 = SettingsViewModel;
+                else
+                    Pane1 = BrowseVideosViewModel;
+
                 Pane2 = SearchVideosViewModel;
 
-                if (!_twoPaneViewLayoutGuide.IsSpanned)
+                if (!IsSpanned)
                 {
                     TallModeConfiguration = TwoPaneViewTallModeConfiguration.SinglePane;
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
@@ -166,12 +177,6 @@ namespace XamarinTV.ViewModels
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
                 }
             }
-        }
-
-        public override void OnFirstAppearing()
-        {
-            base.OnFirstAppearing();
-            Pane1 = BrowseVideosViewModel;
         }
 
         public override void OnAppearing()
@@ -221,40 +226,18 @@ namespace XamarinTV.ViewModels
         SettingsViewModel OnCreateSettingsViewModel()
         {
             var viewModel = new SettingsViewModel();
-
+            viewModel.CloseCommand = new Command(() =>
+            {
+                _settingsActive = false;
+                UpdateLayouts();
+            });
             return viewModel;
         }
 
-        public async void OpenSettingWindow()
+        public void OpenSettingWindow()
         {
-            if (!WindowHelper.HasCompactModeSupport())
-            {
-                if (SettingsViewModel.CloseCommand == null)
-                    SettingsViewModel.CloseCommand = new Command(() => UpdateLayouts());
-
-                Pane1 = SettingsViewModel;
-                return;
-            }
-
-            if (SettingsViewModel.CloseCommand != null)
-                return;
-
-            Views.SettingsView settingsView = new SettingsView()
-            {
-            };
-
-            var closeMeArgs = await WindowHelper.OpenCompactMode(new ContentPage()
-            {
-                Content = settingsView
-            });
-
-            SettingsViewModel.CloseCommand = new Command(async () =>
-            {
-                SettingsViewModel.CloseCommand = null;
-                await closeMeArgs.Close();
-            });
-
-            settingsView.BindingContext = SettingsViewModel;
+            _settingsActive = true;
+            UpdateLayouts();
         }
 
         public void OpenVideoPlayerWindow(Video video)

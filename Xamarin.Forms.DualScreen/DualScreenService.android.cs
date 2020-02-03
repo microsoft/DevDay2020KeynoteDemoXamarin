@@ -144,6 +144,16 @@ namespace Xamarin.Forms.DualScreen
 				view.View.GetLocationOnScreen(location);
 				return new Point(view.View.Context.FromPixels(location[0]), view.View.Context.FromPixels(location[1]));
 			}
+
+			public bool HasCompactModeSupport()
+			{
+				return false;
+			}
+
+			public Task<CompactModeArgs> OpenCompactMode(ContentPage contentPage)
+			{
+				return Task.FromResult(new CompactModeArgs(null, false));
+			}
 		}
 	}
 }
