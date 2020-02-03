@@ -169,14 +169,14 @@ namespace Xamarin.Forms.DualScreen
             }
             else
             {
-                Point displayedScreenAbsCoordinates = Point.Zero;
-
-                if (_layout != null)
-                    displayedScreenAbsCoordinates = DualScreenService.GetLocationOnScreen(_layout) ?? Point.Zero;
-
                 if (DualScreenService.IsSpanned)
-                {
-                    var screenSize = Device.info.ScaledScreenSize;
+				{
+					Point displayedScreenAbsCoordinates = Point.Zero;
+
+					if (_layout != null)
+						displayedScreenAbsCoordinates = DualScreenService.GetLocationOnScreen(_layout) ?? Point.Zero;
+
+					var screenSize = Device.info.ScaledScreenSize;
                     var topStuffHeight = displayedScreenAbsCoordinates.Y;
                     var bottomStuffHeight = screenSize.Height - topStuffHeight - containerArea.Height;
                     var paneWidth = containerArea.Width;

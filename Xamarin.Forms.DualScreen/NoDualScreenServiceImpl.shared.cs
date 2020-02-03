@@ -11,7 +11,7 @@ namespace Xamarin.Forms.DualScreen
         static Lazy<NoDualScreenServiceImpl> _Instance = new Lazy<NoDualScreenServiceImpl>(() => new NoDualScreenServiceImpl());
         public static NoDualScreenServiceImpl Instance => _Instance.Value;
 
-        private NoDualScreenServiceImpl()
+        public NoDualScreenServiceImpl()
         {
         }
 
