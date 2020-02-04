@@ -45,8 +45,6 @@ namespace Xamarin.Forms.DualScreen
         {
             get
             {
-                //when you have it spanned in double landscape it thinks that it's portrait
-                // and visa versa so here's my hack for now to get the correct values for this
                 if (IsSpanned)
                     return ApplicationView.GetForCurrentView().Orientation == ApplicationViewOrientation.Portrait;
                 else
