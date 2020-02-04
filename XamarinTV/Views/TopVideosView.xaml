@@ -74,15 +74,13 @@
                 x:Name="TopVideosCarousel"
                 Grid.Row="0"
                 TranslationY="0"
+                Scrolled="OnScrolled"
                 ItemsSource="{Binding TopVideos}"
                 CurrentItem="{Binding Current, Mode=TwoWay}">
-                <CarouselView.Behaviors>
-                    <behaviors:BrowseCarouselBehavior />
-                </CarouselView.Behaviors>
                 <CarouselView.ItemsLayout>
                     <LinearItemsLayout
                         Orientation="Horizontal"
-                        SnapPointsType="Mandatory"
+                        SnapPointsType="MandatorySingle"
                         SnapPointsAlignment="Center"/>
                 </CarouselView.ItemsLayout>
                 <CarouselView.ItemTemplate>

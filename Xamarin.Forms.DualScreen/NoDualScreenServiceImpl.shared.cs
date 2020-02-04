@@ -44,15 +44,5 @@ namespace Xamarin.Forms.DualScreen
         {
             return null;
         }
-
-        public bool HasCompactModeSupport()
-        {
-            return false;
-        }
-
-        public Task<CompactModeArgs> OpenCompactMode(ContentPage contentPage)
-        {
-            return Task.FromResult(new CompactModeArgs(null, false));
-        }
     }
 }
