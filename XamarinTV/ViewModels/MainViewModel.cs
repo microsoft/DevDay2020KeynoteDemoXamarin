@@ -126,7 +126,7 @@ namespace XamarinTV.ViewModels
             set => SetProperty(ref pane2Length, value);
         }
 
-        public bool IsSpanned => DualScreenInfo.Current.SpanMode != TwoPaneViewMode.SinglePane;
+        public bool DeviceIsSpanned => DualScreenInfo.Current.SpanMode != TwoPaneViewMode.SinglePane;
 
         public void UpdateLayouts()
         {
@@ -149,7 +149,7 @@ namespace XamarinTV.ViewModels
                 Pane2 = VideoDetailViewModel;
                 TallModeConfiguration = TwoPaneViewTallModeConfiguration.TopBottom;
                 
-                if (!IsSpanned)
+                if (!DeviceIsSpanned)
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
                 else
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.LeftRight;
@@ -168,7 +168,7 @@ namespace XamarinTV.ViewModels
 
                 Pane2 = SearchVideosViewModel;
 
-                if (!IsSpanned)
+                if (!DeviceIsSpanned)
                 {
                     TallModeConfiguration = TwoPaneViewTallModeConfiguration.SinglePane;
                     WideModeConfiguration = TwoPaneViewWideModeConfiguration.SinglePane;
