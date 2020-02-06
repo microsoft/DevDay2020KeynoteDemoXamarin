@@ -265,7 +265,7 @@ namespace Xamarin.Forms.DualScreen
 
 				_hasMeasured = true;
 
-				this.TwoPaneViewLayoutGuide.UpdateLayouts();
+				TwoPaneViewLayoutGuide.UpdateLayouts();
 
 				if (TwoPaneViewLayoutGuide.Mode != TwoPaneViewMode.SinglePane)
 				{
@@ -354,6 +354,11 @@ namespace Xamarin.Forms.DualScreen
 				else
 				{
 					InvalidateLayout();
+					Device.BeginInvokeOnMainThread(() =>
+					{
+						TwoPaneViewLayoutGuide.UpdateLayouts();
+						InvalidateLayout();
+					});
 				}
 			}
 			finally
