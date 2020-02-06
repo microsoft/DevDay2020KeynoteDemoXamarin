@@ -48,8 +48,10 @@ namespace XamarinTV.Views
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                if (DualScreenInfo.Current.IsLandscape)
+                if (DualScreenInfo.Current.IsLandscape && Device.RuntimePlatform == Device.Android)
+                {
                     VideoPlayer.Aspect = Aspect.AspectFill;
+                }
                 else
                     VideoPlayer.Aspect = Aspect.AspectFit;
 
