@@ -13,7 +13,7 @@
 
             <Style
                 x:Key="TitleStyle"
-                TargetType="Span">
+                TargetType="Label">
                 <Setter
                     Property="FontFamily"
                     Value="{StaticResource PoppinsRegular}" />
@@ -27,7 +27,7 @@
 
             <Style
                 x:Key="ViewsStyle"
-                TargetType="Span">
+                TargetType="Label">
                 <Setter
                     Property="FontFamily"
                     Value="{StaticResource PoppinsRegular}" />
@@ -41,7 +41,7 @@
 
             <Style
                 x:Key="DescriptionStyle"
-                TargetType="Span">
+                TargetType="Label">
                 <Setter
                     Property="FontFamily"
                     Value="{StaticResource PoppinsLight}" />

@@ -44,23 +44,15 @@
             RowSpacing="0">
             <Grid.RowDefinitions>
                 <RowDefinition
-                    x:Name="ContentRow"
-                    Height="Auto" />
-                <RowDefinition
                     Height="{StaticResource TopBarHeight}" />
                 <RowDefinition
                     Height="3*" />
                 <RowDefinition
                     Height="85" />
             </Grid.RowDefinitions>
-            <ContentView
-                Grid.Row="0"
-                x:Name="ContentView"
-                BindingContext="{Binding TopViewModel}"
-                Content="{Binding ., Converter={StaticResource ViewModelToViewConverter}}" />
             <!-- RELATED VIDEO CONTENT -->
             <tabs:TabHostView
-                Grid.Row="1"
+                Grid.Row="0"
                 BackgroundColor="{StaticResource BlackColor}"
                 ShadowType="Bottom"
                 TabType="Scrollable"
@@ -75,7 +67,7 @@
                 </tabs:TabHostView.Tabs>
             </tabs:TabHostView>
             <tabs:ViewSwitcher
-                Grid.Row="2"
+                Grid.Row="1"
                 Grid.RowSpan="2"
                 Margin="0,0,0,90"
                 x:Name="Switcher"
@@ -86,7 +78,7 @@
                 <views:NotesView />
             </tabs:ViewSwitcher>
             <Grid
-                Grid.Row="3">
+                Grid.Row="2">
                 <BoxView
                     BackgroundColor="Black"
                     Opacity="0.8" />
