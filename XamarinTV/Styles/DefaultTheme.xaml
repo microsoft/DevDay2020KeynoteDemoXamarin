@@ -74,10 +74,10 @@
                      Size="{OnPlatform Default=18, UWP=8}"/>
 
     <FontImageSource x:Key="IconCloseCaption"
-                     FontFamily="{StaticResource FontAwesome}"
-                     Glyph="{x:Static fonts:IconFont.ClosedCaptioning}"
+                     FontFamily="{StaticResource Fabric}"
+                     Glyph="&#xEF84;"
                      Color="Gray"
-                     Size="24"/>
+                     Size="10"/>
 
     <FontImageSource x:Key="IconHighDefinition"
                      FontFamily="{StaticResource FontAwesome}"
@@ -86,10 +86,10 @@
                      Size="24"/>
 
     <FontImageSource x:Key="IconMute"
-                     FontFamily="{StaticResource FontAwesome}"
-                     Glyph="{x:Static fonts:IconFont.VolumeMute}"
+                     FontFamily="{StaticResource Fabric}"
+                     Glyph="&#xEA85;"
                      Color="Gray"
-                     Size="24"/>
+                     Size="10"/>
 
     <FontImageSource
                 x:Key="PlayIcon"

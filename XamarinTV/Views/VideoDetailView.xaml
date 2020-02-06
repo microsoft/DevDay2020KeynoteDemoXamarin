@@ -101,6 +101,7 @@
                         Value="{Binding Volume, Mode=TwoWay}"
                         ThumbColor="Gray"
                         MinimumTrackColor="Gray"
+                        VerticalOptions="Center"
                         MaximumTrackColor="DarkGray"
                         WidthRequest="100" />
                     <BoxView
@@ -109,11 +110,6 @@
                         BackgroundColor="Transparent"
                         Source="{StaticResource IconCloseCaption}"
                         Margin="0,0,15,0" />
-                    <ImageButton
-                        BackgroundColor="Transparent"
-                        Source="{StaticResource IconHighDefinition}" />
-
-
                 </FlexLayout>
             </Grid>
         </Grid>

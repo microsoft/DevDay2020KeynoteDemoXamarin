@@ -31,7 +31,6 @@ namespace XamarinTV.Views
                 _inactivityTimer.Elapsed -= OnInactivityTimerElapsed;
                 _inactivityTimer.Stop();
                 DualScreenInfo.Current.PropertyChanged -= OnDualScreenInfoChanged;
-                VideoPlayer.Play();
             }
             else
             {
@@ -42,16 +41,13 @@ namespace XamarinTV.Views
                 _inactivityTimer.Start();
                 DualScreenInfo.Current.PropertyChanged += OnDualScreenInfoChanged;
                 UpdateAspectRatio();
-                VideoPlayer.Play();
             }
         }
 
         void UpdateAspectRatio()
         {
-            VideoPlayer.Play();
             Device.BeginInvokeOnMainThread(() =>
             {
-                VideoPlayer.Play();
                 if (DualScreenInfo.Current.IsLandscape)
                 {
                     VideoPlayer.Aspect = Aspect.AspectFill;
