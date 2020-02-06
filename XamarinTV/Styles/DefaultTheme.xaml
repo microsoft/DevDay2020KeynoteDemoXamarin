@@ -77,7 +77,7 @@
                      FontFamily="{StaticResource Fabric}"
                      Glyph="&#xEF84;"
                      Color="Gray"
-                     Size="10"/>
+                     Size="{OnPlatform Default=24, UWP=10}"/>
 
     <FontImageSource x:Key="IconHighDefinition"
                      FontFamily="{StaticResource FontAwesome}"
@@ -89,7 +89,7 @@
                      FontFamily="{StaticResource Fabric}"
                      Glyph="&#xEA85;"
                      Color="Gray"
-                     Size="10"/>
+                     Size="{OnPlatform Default=24, UWP=10}"/>
 
     <FontImageSource
                 x:Key="PlayIcon"
