@@ -16,7 +16,8 @@ namespace XamarinTV.ViewModels
         readonly Lazy<SearchVideosViewModel> _searchVideosViewModel;
         readonly Lazy<VideoPlayerViewModel> _videoPlayerViewModel;
         readonly Lazy<SettingsViewModel> _settingsViewModel;
-        readonly Lazy<VideoDetailViewModel> _videoDetailViewModel = new Lazy<VideoDetailViewModel>(() => new VideoDetailViewModel());
+        readonly Lazy<VideoDetailViewModel> _videoDetailViewModel;
+
         static readonly Lazy<MainViewModel> _mainViewModel = new Lazy<MainViewModel>(() => new MainViewModel());
 
         public static MainViewModel Instance => _mainViewModel.Value;
@@ -40,6 +41,7 @@ namespace XamarinTV.ViewModels
 
         private MainViewModel()
         {
+            _videoDetailViewModel = new Lazy<VideoDetailViewModel>(OnCreateVideoDetailsViewModel);
             _browseVideosViewModel = new Lazy<BrowseVideosViewModel>(OnCreateBrowseVideosViewModel);
             _searchVideosViewModel = new Lazy<SearchVideosViewModel>(OnCreateSearchVideosViewModel);
             _videoPlayerViewModel = new Lazy<VideoPlayerViewModel>(OnCreateVideoPlayerViewModel);
@@ -190,6 +192,19 @@ namespace XamarinTV.ViewModels
         BrowseVideosViewModel OnCreateBrowseVideosViewModel()
         {
             BrowseVideosViewModel viewModel = new BrowseVideosViewModel();
+            return viewModel;
+        }
+
+        VideoDetailViewModel OnCreateVideoDetailsViewModel()
+        {
+            VideoDetailViewModel viewModel = new VideoDetailViewModel();
+
+            viewModel.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(VideoDetailViewModel.Volume))
+                    VideoPlayerViewModel.Volume = VideoDetailViewModel.Volume;
+            };
+
             return viewModel;
         }
 

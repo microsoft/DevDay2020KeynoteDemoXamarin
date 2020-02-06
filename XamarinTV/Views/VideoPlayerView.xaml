@@ -115,6 +115,7 @@
                     Source="{Binding VideoSource, Converter={StaticResource VideoSourceConverter}}"
                     StateRequested="MediaElement_StateRequested"
                     MediaOpened="VideoPlayer_MediaOpened"
+                    Volume="{Binding Volume}"
                     Style="{StaticResource VideoPlayerStyle}"/>
                 <Grid x:Name="PlayerHUD"
                     Grid.Row="0"

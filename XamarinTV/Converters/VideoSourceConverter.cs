@@ -8,6 +8,12 @@ namespace XamarinTV.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value == null)
+                return null;
+
+            if (String.IsNullOrWhiteSpace(value.ToString()))
+                return null;
+
             if(Device.RuntimePlatform == Device.UWP)
                 return new Uri($"ms-appx:///Assets/{value}");
             else

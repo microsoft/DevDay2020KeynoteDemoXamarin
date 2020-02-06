@@ -95,9 +95,10 @@
                     Padding="15,0,15,15">
                     <ImageButton
                         BackgroundColor="Transparent"
+                        Command="{Binding MuteVideo}"
                         Source="{StaticResource IconMute}" />
                     <Slider
-                        Value="0.2"
+                        Value="{Binding Volume, Mode=TwoWay}"
                         ThumbColor="Gray"
                         MinimumTrackColor="Gray"
                         MaximumTrackColor="DarkGray"
