@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
+using XamarinTV.ViewModels;
 
 namespace XamarinTV.Views
 {
@@ -12,19 +13,23 @@ namespace XamarinTV.Views
         Timer _inactivityTimer;
         Timer _playbackTimer;
         Rectangle _previousBounds;
+        bool _playing = true;
+        TimeSpan _currentPosition;
+        bool _layoutChanged;
 
         public VideoPlayerView()
         {
             InitializeComponent();
             _inactivityTimer = new Timer(TimeSpan.FromSeconds(10).TotalMilliseconds);
             _playbackTimer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
+            VideoPlayer.PropertyChanged += OnVideoPlayerPropertyChanged;
         }
 
         protected override void OnParentSet()
         {
             base.OnParentSet();
 
-            if(Parent == null)
+            if (Parent == null)
             {
                 _playbackTimer.Elapsed -= _playbackTimer_Elapsed;
                 _playbackTimer.Stop();
@@ -46,8 +51,29 @@ namespace XamarinTV.Views
         protected override void LayoutChildren(double x, double y, double width, double height)
         {
             base.LayoutChildren(x, y, width, height);
-            if(_previousBounds != this.Bounds)
+            if (_previousBounds != this.Bounds)
+            {
+                _layoutChanged = true;
                 PlayPause();
+            }
+        }
+
+        void OnVideoPlayerPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if(e.PropertyName == nameof(VideoPlayer.CurrentState) && 
+                Parent != null &&
+                _playing &&
+                VideoPlayer.CurrentState == MediaElementState.Stopped && 
+                _layoutChanged &&
+                VideoPlayer.Source != null &&
+                BindingContext is VideoPlayerViewModel vpm &&
+                vpm.Video != null &&
+                _currentPosition > VideoPlayer.Position)
+            {
+                _layoutChanged = false;
+                VideoPlayer.Position = _currentPosition;
+                VideoPlayer.Play();
+            }
         }
 
         async void PlayPause()
@@ -76,7 +102,7 @@ namespace XamarinTV.Views
 
             _inactivityTimer.Stop();
 
-            if(Parent != null)
+            if (Parent != null)
                 _inactivityTimer.Start();
 
         }
@@ -102,20 +128,22 @@ namespace XamarinTV.Views
             }
         }
 
-        private void PlayPauseToggle_Clicked(object sender, EventArgs e)
+        void PlayPauseToggle_Clicked(object sender, EventArgs e)
         {
             if (VideoPlayer.CurrentState == MediaElementState.Playing)
             {
+                _playing = false;
                 VideoPlayer.Pause();
             }
             else
             {
+                _playing = true;
                 VideoPlayer.Play();
             }
         }
 
-        private async void TapGestureRecognizer_Tapped(object sender, EventArgs e)
-        {
+        async void TapGestureRecognizer_Tapped(object sender, EventArgs e)
+        {           
             if (PlayerHUD.Opacity == 1)
             {
                 await Task.WhenAny<bool>
@@ -136,17 +164,19 @@ namespace XamarinTV.Views
                 _inactivityTimer.Start();
         }
 
-        private void VideoPlayer_MediaOpened(object sender, EventArgs e)
+        void VideoPlayer_MediaOpened(object sender, EventArgs e)
         {
             UpdateTimeDisplay();
         }
 
-        private void UpdateTimeDisplay()
+        void UpdateTimeDisplay()
         {
             Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() =>
             {
+                if(VideoPlayer.Position > _currentPosition)
+                    _currentPosition = VideoPlayer.Position;
+
                 TimeAndDuration.Text = $"{VideoPlayer.Position.ToString(@"hh\:mm\:ss")} / {VideoPlayer.Duration?.ToString(@"hh\:mm\:ss")}";
-                Debug.WriteLine($"{VideoPlayer.Position.ToString(@"hh\:mm\:ss")} / {VideoPlayer.Duration?.ToString(@"hh\:mm\:ss")}");
             });
         }
     }
