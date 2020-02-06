@@ -11,18 +11,56 @@ namespace XamarinTV.Views
     {
         Timer _inactivityTimer;
         Timer _playbackTimer;
+        Rectangle _previousBounds;
 
         public VideoPlayerView()
         {
             InitializeComponent();
             _inactivityTimer = new Timer(TimeSpan.FromSeconds(10).TotalMilliseconds);
-            _inactivityTimer.Elapsed += _inactivityTimer_Elapsed;
-            _inactivityTimer.Start();
-
             _playbackTimer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
-            _playbackTimer.Elapsed += _playbackTimer_Elapsed;
-            _playbackTimer.Start();
         }
+
+        protected override void OnParentSet()
+        {
+            base.OnParentSet();
+
+            if(Parent == null)
+            {
+                _playbackTimer.Elapsed -= _playbackTimer_Elapsed;
+                _playbackTimer.Stop();
+
+                _inactivityTimer.Elapsed -= _inactivityTimer_Elapsed;
+                _inactivityTimer.Stop();
+            }
+            else
+            {
+                _playbackTimer.Elapsed += _playbackTimer_Elapsed;
+                _playbackTimer.Start();
+
+                _inactivityTimer.Elapsed += _inactivityTimer_Elapsed;
+                _inactivityTimer.Start();
+
+            }
+        }
+
+        protected override void LayoutChildren(double x, double y, double width, double height)
+        {
+            base.LayoutChildren(x, y, width, height);
+            if(_previousBounds != this.Bounds)
+                PlayPause();
+        }
+
+        async void PlayPause()
+        {
+            _previousBounds = this.Bounds;
+            if (VideoPlayer.CurrentState == MediaElementState.Playing)
+            {
+                VideoPlayer.Stop();
+                await Task.Delay(1);
+                VideoPlayer.Play();
+            }
+        }
+
 
         private void _playbackTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -37,7 +75,9 @@ namespace XamarinTV.Views
             );
 
             _inactivityTimer.Stop();
-            _inactivityTimer.Start();
+
+            if(Parent != null)
+                _inactivityTimer.Start();
 
         }
 
@@ -51,7 +91,9 @@ namespace XamarinTV.Views
             if (e.State == MediaElementState.Playing)
             {
                 _playbackTimer.Stop();
-                _playbackTimer.Start();
+
+                if (Parent != null)
+                    _playbackTimer.Start();
 
             }
             else if (e.State == MediaElementState.Paused || e.State == MediaElementState.Stopped)
@@ -90,7 +132,8 @@ namespace XamarinTV.Views
             }
 
             _inactivityTimer.Stop();
-            _inactivityTimer.Start();
+            if (Parent != null)
+                _inactivityTimer.Start();
         }
 
         private void VideoPlayer_MediaOpened(object sender, EventArgs e)
