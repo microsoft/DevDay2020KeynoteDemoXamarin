@@ -1,4 +1,6 @@
-﻿using XamarinTV.Models;
+﻿using System;
+using Xamarin.Forms;
+using XamarinTV.Models;
 using XamarinTV.ViewModels.Base;
 
 namespace XamarinTV.ViewModels
@@ -7,6 +9,44 @@ namespace XamarinTV.ViewModels
     {
         Video _selectedVideo;
         int _selectedViewModelIndex;
+        bool _isMuted;
+        double _previousVolume;
+        double _volume;
+
+        public Command MuteVideo { get; }
+
+        public VideoDetailViewModel()
+        {
+            MuteVideo = new Command(OnMuteVideo);
+            Volume = 0.2d;
+        }
+
+        void OnMuteVideo(object obj)
+        {
+            if(_isMuted)
+            {
+                Volume = _previousVolume;
+                _isMuted = false;
+            }
+            else
+            {
+                _previousVolume = Volume;
+                _isMuted = true;
+                Volume = 0d;
+            }
+        }
+
+        public double Volume
+        {
+            get => _volume;
+            set
+            {
+                if(SetProperty(ref _volume, value) && value > 0d)
+                {
+                    _isMuted = false;
+                }
+            }
+        }
 
         public Video SelectedVideo
         {

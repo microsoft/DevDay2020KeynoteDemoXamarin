@@ -2,10 +2,8 @@
 <ContentView
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewmodels="clr-namespace:XamarinTV.ViewModels"
-    xmlns:mediamanager="clr-namespace:MediaManager.Forms;assembly=MediaManager.Forms"
     x:Class="XamarinTV.Views.VideoPlayerView"
-    BackgroundColor="Transparent">
+    BackgroundColor="{StaticResource BlackColor}">
     <ContentView.Resources>
         <ResourceDictionary>
 
@@ -31,7 +29,7 @@
                     Value="{StaticResource MidMediumSize}" />
                 <Setter
                     Property="TextColor"
-                    Value="Gray" />
+                    Value="White" />
                 <Setter
                     Property="LineBreakMode"
                     Value="TailTruncation" />
@@ -40,32 +38,38 @@
                     Value="1" />
                 <Setter
                     Property="VerticalOptions"
-                    Value="Center" />
+                    Value="Start" />
+                <Setter
+                    Property="HorizontalOptions"
+                    Value="Start"/>
                 <Setter
                     Property="Margin"
-                    Value="12, 0" />
+                    Value="12, 10" />
             </Style>
 
             <Style
                 x:Key="VideoPlayerStyle"
-                TargetType="mediamanager:VideoView">
+                TargetType="MediaElement">
                 <Setter
                     Property="BackgroundColor"
-                    Value="{DynamicResource BackgroundColor}" />
+                    Value="{DynamicResource BlackColor}" />
+                <Setter
+                    Property="HeightRequest"
+                    Value="300" />
                 <Setter
                     Property="AutoPlay"
                     Value="True" />
                 <Setter
-                    Property="ShowControls"
-                    Value="True" />
+                    Property="ShowsPlaybackControls"
+                    Value="False" />
                 <Setter
-                    Property="Repeat"
-                    Value="Off" />
+                    Property="IsLooping"
+                    Value="False" />
                 <Setter
                     Property="VerticalOptions"
                     Value="FillAndExpand" />
                 <Setter
-                    Property="VideoAspect"
+                    Property="Aspect"
                     Value="AspectFit" />
             </Style>
 
@@ -77,20 +81,26 @@
                     Value="Transparent" />
                 <Setter
                     Property="VerticalOptions"
-                    Value="Center" />
+                    Value="Start" />
+                <Setter
+                    Property="HorizontalOptions"
+                    Value="End"/>
                 <Setter
                     Property="Margin"
-                    Value="0,0,10,0" />
+                    Value="0,10,10,0" />
             </Style>
         </ResourceDictionary>
     </ContentView.Resources>
     <ContentView.Content>
         <Frame
             HeightRequest="300"
-            BackgroundColor="Black"
+            BackgroundColor="{StaticResource BlackColor}"
             CornerRadius="0">
             <Grid
                 RowSpacing="0">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnTapGestureRecognizerTapped"/>
+                </Grid.GestureRecognizers>
                 <Grid.RowDefinitions>
                     <RowDefinition
                         Height="*" />
@@ -99,34 +109,53 @@
                     <RowDefinition
                         Height="*" />
                 </Grid.RowDefinitions>
-                <mediamanager:VideoView
+                <MediaElement
                     Grid.Row="1"
-                    x:Name="VideoView"
-                    Style="{StaticResource VideoPlayerStyle}" />
-                <!-- TODO: below currently overlaps. would like to hide native player controls
-                bundle them with this bar, and add a delay to auto-hide the whole thing -->
-                <Grid
+                    x:Name="VideoPlayer"
+                    Source="{Binding VideoSource, Converter={StaticResource VideoSourceConverter}}"
+                    StateRequested="MediaElement_StateRequested"
+                    MediaOpened="VideoPlayer_MediaOpened"
+                    Volume="{Binding Volume}"
+                    Style="{StaticResource VideoPlayerStyle}"/>
+                <Grid x:Name="PlayerHUD"
                     Grid.Row="0"
-                    Grid.RowSpan="3"
-                    Style="{StaticResource HeaderStyle}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition
-                            Width="*" />
-                        <ColumnDefinition
-                            Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <BoxView
-                        Opacity="0.4"
-                        Grid.ColumnSpan="2"
-                        VerticalOptions="Fill"
-                        HorizontalOptions="Fill"
-                        BackgroundColor="{StaticResource BlackColor}" />
+                    Grid.RowSpan="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <BoxView BackgroundColor="Black" Opacity="0.6"/>
+                    <ImageButton x:Name="PlayPauseToggle" 
+                         Source="{StaticResource PauseIcon}" 
+                         Clicked="PlayPauseToggle_Clicked"
+                         BackgroundColor="Transparent"
+                         HorizontalOptions="Center" 
+                         VerticalOptions="Center">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="PlaybackStates">
+                                <VisualState Name="paused">
+                                    <VisualState.Setters>
+                                        <Setter Property="Source" Value="{StaticResource PlayIcon}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState Name="playing">
+                                    <VisualState.Setters>
+                                        <Setter Property="Source" Value="{StaticResource PauseIcon}"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ImageButton>
+                    <Label x:Name="TimeAndDuration" Text="Loading..."
+                       TextColor="White" 
+                       FontSize="14"
+                       Margin="15"
+                       VerticalOptions="End"
+                       HorizontalOptions="End"/>
+
                     <Label
-                        Grid.Column="0"
                         Text="{Binding Video.Title}"
                         Style="{StaticResource TitleStyle}" />
                     <ImageButton
-                        Grid.Column="1"
                         Command="{Binding CloseCommand}"
                         Source="{StaticResource IconWindowClose}"
                         Style="{StaticResource CloseButtonStyle}" />
