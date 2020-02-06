@@ -71,7 +71,7 @@
                      FontFamily="{StaticResource Fabric}"
                      Glyph="&#xE8BB;"
                      Color="Gray"
-                     Size="18"/>
+                     Size="{OnPlatform Default=18, UWP=8}"/>
 
     <FontImageSource x:Key="IconCloseCaption"
                      FontFamily="{StaticResource FontAwesome}"

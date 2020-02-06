@@ -117,7 +117,7 @@
                     MediaOpened="VideoPlayer_MediaOpened"
                     Style="{StaticResource VideoPlayerStyle}"/>
                 <Grid x:Name="PlayerHUD"
-                      Grid.Row="0"
+                    Grid.Row="0"
                     Grid.RowSpan="3">
                     <Grid.RowDefinitions>
                         <RowDefinition />
