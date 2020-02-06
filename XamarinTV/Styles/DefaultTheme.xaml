@@ -91,6 +91,17 @@
                      Color="Gray"
                      Size="24"/>
 
+    <FontImageSource
+                x:Key="PlayIcon"
+                FontFamily="{StaticResource Fabric}"
+                Glyph="{x:Static fonts:FabIconFont.Play}"
+                Size="64"/>
+    <FontImageSource
+                x:Key="PauseIcon"
+                FontFamily="{StaticResource Fabric}"
+                Glyph="{x:Static fonts:FabIconFont.Pause}"
+                Size="64"/>
+
     <!-- FONT SIZES -->
     <OnPlatform x:Key="LittleSize" x:TypeArguments="x:Double" iOS="9" Android="9" />
     <OnPlatform x:Key="MidMediumSize" x:TypeArguments="x:Double" iOS="12" Android="14" />
