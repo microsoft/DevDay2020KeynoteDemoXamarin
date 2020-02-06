@@ -1,10 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
-using XamarinTV.ViewModels;
+using Xamarin.Forms.DualScreen;
 
 namespace XamarinTV.Views
 {
@@ -12,17 +11,12 @@ namespace XamarinTV.Views
     {
         Timer _inactivityTimer;
         Timer _playbackTimer;
-        Rectangle _previousBounds;
-        bool _playing = true;
-        TimeSpan _currentPosition;
-        bool _layoutChanged;
 
         public VideoPlayerView()
         {
             InitializeComponent();
-            _inactivityTimer = new Timer(TimeSpan.FromSeconds(10).TotalMilliseconds);
+            _inactivityTimer = new Timer(TimeSpan.FromSeconds(3).TotalMilliseconds);
             _playbackTimer = new Timer(TimeSpan.FromSeconds(1).TotalMilliseconds);
-            VideoPlayer.PropertyChanged += OnVideoPlayerPropertyChanged;
         }
 
         protected override void OnParentSet()
@@ -31,69 +25,54 @@ namespace XamarinTV.Views
 
             if (Parent == null)
             {
-                _playbackTimer.Elapsed -= _playbackTimer_Elapsed;
+                _playbackTimer.Elapsed -= OnPlaybackTimerElapsed;
                 _playbackTimer.Stop();
 
-                _inactivityTimer.Elapsed -= _inactivityTimer_Elapsed;
+                _inactivityTimer.Elapsed -= OnInactivityTimerElapsed;
                 _inactivityTimer.Stop();
+                DualScreenInfo.Current.PropertyChanged -= OnDualScreenInfoChanged;
             }
             else
             {
-                _playbackTimer.Elapsed += _playbackTimer_Elapsed;
+                _playbackTimer.Elapsed += OnPlaybackTimerElapsed;
                 _playbackTimer.Start();
 
-                _inactivityTimer.Elapsed += _inactivityTimer_Elapsed;
+                _inactivityTimer.Elapsed += OnInactivityTimerElapsed;
                 _inactivityTimer.Start();
-
+                DualScreenInfo.Current.PropertyChanged += OnDualScreenInfoChanged;
+                UpdateAspectRatio();
             }
+        }
+
+        void UpdateAspectRatio()
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                if (DualScreenInfo.Current.IsLandscape)
+                    VideoPlayer.Aspect = Aspect.AspectFill;
+                else
+                    VideoPlayer.Aspect = Aspect.AspectFit;
+
+            });
+        }
+
+        void OnDualScreenInfoChanged(object sender, PropertyChangedEventArgs e)
+        {
+            UpdateAspectRatio();
         }
 
         protected override void LayoutChildren(double x, double y, double width, double height)
         {
             base.LayoutChildren(x, y, width, height);
-            if (_previousBounds != this.Bounds)
-            {
-                _layoutChanged = true;
-                PlayPause();
-            }
+            UpdateAspectRatio();
         }
 
-        void OnVideoPlayerPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if(e.PropertyName == nameof(VideoPlayer.CurrentState) && 
-                Parent != null &&
-                _playing &&
-                VideoPlayer.CurrentState == MediaElementState.Stopped && 
-                _layoutChanged &&
-                VideoPlayer.Source != null &&
-                BindingContext is VideoPlayerViewModel vpm &&
-                vpm.Video != null &&
-                _currentPosition > VideoPlayer.Position)
-            {
-                _layoutChanged = false;
-                VideoPlayer.Position = _currentPosition;
-                VideoPlayer.Play();
-            }
-        }
-
-        async void PlayPause()
-        {
-            _previousBounds = this.Bounds;
-            if (VideoPlayer.CurrentState == MediaElementState.Playing)
-            {
-                VideoPlayer.Stop();
-                await Task.Delay(1);
-                VideoPlayer.Play();
-            }
-        }
-
-
-        private void _playbackTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void OnPlaybackTimerElapsed(object sender, ElapsedEventArgs e)
         {
             this.UpdateTimeDisplay();
         }
 
-        private async void _inactivityTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private async void OnInactivityTimerElapsed(object sender, ElapsedEventArgs e)
         {
             await Task.WhenAny<bool>
             (
@@ -104,7 +83,6 @@ namespace XamarinTV.Views
 
             if (Parent != null)
                 _inactivityTimer.Start();
-
         }
 
         private void MediaElement_StateRequested(object sender, StateRequested e)
@@ -117,7 +95,6 @@ namespace XamarinTV.Views
             if (e.State == MediaElementState.Playing)
             {
                 _playbackTimer.Stop();
-
                 if (Parent != null)
                     _playbackTimer.Start();
 
@@ -132,18 +109,16 @@ namespace XamarinTV.Views
         {
             if (VideoPlayer.CurrentState == MediaElementState.Playing)
             {
-                _playing = false;
                 VideoPlayer.Pause();
             }
             else
             {
-                _playing = true;
                 VideoPlayer.Play();
             }
         }
 
-        async void TapGestureRecognizer_Tapped(object sender, EventArgs e)
-        {           
+        async void OnTapGestureRecognizerTapped(object sender, EventArgs e)
+        {
             if (PlayerHUD.Opacity == 1)
             {
                 await Task.WhenAny<bool>
@@ -173,9 +148,6 @@ namespace XamarinTV.Views
         {
             Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() =>
             {
-                if(VideoPlayer.Position > _currentPosition)
-                    _currentPosition = VideoPlayer.Position;
-
                 TimeAndDuration.Text = $"{VideoPlayer.Position.ToString(@"hh\:mm\:ss")} / {VideoPlayer.Duration?.ToString(@"hh\:mm\:ss")}";
             });
         }

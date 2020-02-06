@@ -99,7 +99,7 @@
             <Grid
                 RowSpacing="0">
                 <Grid.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                    <TapGestureRecognizer Tapped="OnTapGestureRecognizerTapped"/>
                 </Grid.GestureRecognizers>
                 <Grid.RowDefinitions>
                     <RowDefinition
