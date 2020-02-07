@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     x:Class="XamarinTV.Views.MainPage"
     Visual="Material">
-    <!--Xamarin.Forms TwoPaneView that sizes and position content in
+    <!--Xamarin.Forms TwoPaneView that sizes and positions content in
         the available space, either side-by-side or top-bottom-->
     <dualScreen:TwoPaneView
         x:Name="twoPaneView"
