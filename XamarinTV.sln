@@ -6,11 +6,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinTV.Android", "Xamari
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamarinTV", "XamarinTV\XamarinTV.csproj", "{2BA185EB-4447-4867-BE4F-B27E15184AFF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9169623A-1495-4624-BD09-30675B01FB74}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinTV.UWP", "XamarinTV.UWP\XamarinTV.UWP.csproj", "{87672212-2BA2-4636-9360-E231F31FC5F5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xamarin.Forms.DualScreen", "Xamarin.Forms.DualScreen\Xamarin.Forms.DualScreen.csproj", "{D72D4D6D-C806-41C9-9976-644147474016}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDK", "SDK", "{B58E2258-FC19-4FB1-83DB-931030EEB660}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -232,6 +232,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D72D4D6D-C806-41C9-9976-644147474016} = {B58E2258-FC19-4FB1-83DB-931030EEB660}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2A49E67B-B5AB-44B7-9E31-3952FE2C9911}

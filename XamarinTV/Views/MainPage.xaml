@@ -9,6 +9,8 @@
     mc:Ignorable="d"
     x:Class="XamarinTV.Views.MainPage"
     Visual="Material">
+    <!--Xamarin.Forms TwoPaneView that sizes and position content in
+        the available space, either side-by-side or top-bottom-->
     <dualScreen:TwoPaneView
         x:Name="twoPaneView"
         Pane1Length="{Binding Pane1Length}"
@@ -18,10 +20,12 @@
         Mode="{Binding TwoPaneViewMode, Mode=OneWayToSource}"
         TallModeConfiguration="{Binding TallModeConfiguration}"
         WideModeConfiguration="{Binding WideModeConfiguration}">
+        <!--Pane 1-->
         <dualScreen:TwoPaneView.Pane1>
             <local:AnimationView
                 ViewToAnimateIn="{Binding Pane1, Converter={StaticResource ViewModelToViewConverter}}"></local:AnimationView>
         </dualScreen:TwoPaneView.Pane1>
+        <!--Pane 2-->
         <dualScreen:TwoPaneView.Pane2>
             <local:AnimationView
                 ViewToAnimateIn="{Binding Pane2, Converter={StaticResource ViewModelToViewConverter}}"></local:AnimationView>

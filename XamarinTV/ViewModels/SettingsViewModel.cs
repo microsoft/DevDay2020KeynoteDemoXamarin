@@ -72,12 +72,12 @@ namespace XamarinTV.ViewModels
                 new OpenSource { Title = "Sharpnado", Url = "https://github.com/roubachof/Sharpnado.Presentation.Forms" },
                 new OpenSource { Title = "StateSquid", Url = "https://github.com/sthewissen/Xamarin.Forms.StateSquid" },
                 new OpenSource { Title = "Xamanimation", Url = "https://github.com/jsuarezruiz/Xamanimation" },
-                new OpenSource { Title = "XamarinMediaManager", Url = "https://github.com/Baseflow/XamarinMediaManager" }
             };
         }
 
         void ViewCode()
         {
+            // Open GitHub with Xamarin.Essentials' Browser API
             string url = "https://github.com/microsoft/surface-duo-sdk-xamarin-samples";
             Browser.OpenAsync(new Uri(url));
         }
