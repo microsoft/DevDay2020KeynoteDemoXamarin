@@ -2,7 +2,7 @@
 
 ### Full dual-screen enabled app.
 
-![xamarin TV demo on a surface neo device](images/xamarintv-neo.png)
+![xamarin TV demo on a surface neo device](images/xamarintv.png)
 
 ## Setup
 
