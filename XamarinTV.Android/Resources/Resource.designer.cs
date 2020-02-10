@@ -5568,10 +5568,6 @@ namespace XamarinTV.Droid
 			global::Xamarin.Forms.DualScreen.Resource.Color.bright_foreground_inverse_material_light = global::XamarinTV.Droid.Resource.Color.bright_foreground_inverse_material_light;
 			global::Xamarin.Forms.DualScreen.Resource.Color.bright_foreground_material_dark = global::XamarinTV.Droid.Resource.Color.bright_foreground_material_dark;
 			global::Xamarin.Forms.DualScreen.Resource.Color.bright_foreground_material_light = global::XamarinTV.Droid.Resource.Color.bright_foreground_material_light;
-			global::Xamarin.Forms.DualScreen.Resource.Color.browser_actions_bg_grey = global::XamarinTV.Droid.Resource.Color.browser_actions_bg_grey;
-			global::Xamarin.Forms.DualScreen.Resource.Color.browser_actions_divider_color = global::XamarinTV.Droid.Resource.Color.browser_actions_divider_color;
-			global::Xamarin.Forms.DualScreen.Resource.Color.browser_actions_text_color = global::XamarinTV.Droid.Resource.Color.browser_actions_text_color;
-			global::Xamarin.Forms.DualScreen.Resource.Color.browser_actions_title_color = global::XamarinTV.Droid.Resource.Color.browser_actions_title_color;
 			global::Xamarin.Forms.DualScreen.Resource.Color.button_material_dark = global::XamarinTV.Droid.Resource.Color.button_material_dark;
 			global::Xamarin.Forms.DualScreen.Resource.Color.button_material_light = global::XamarinTV.Droid.Resource.Color.button_material_light;
 			global::Xamarin.Forms.DualScreen.Resource.Color.cardview_dark_background = global::XamarinTV.Droid.Resource.Color.cardview_dark_background;
@@ -5742,8 +5738,6 @@ namespace XamarinTV.Droid
 			global::Xamarin.Forms.DualScreen.Resource.Dimension.abc_text_size_subtitle_material_toolbar = global::XamarinTV.Droid.Resource.Dimension.abc_text_size_subtitle_material_toolbar;
 			global::Xamarin.Forms.DualScreen.Resource.Dimension.abc_text_size_title_material = global::XamarinTV.Droid.Resource.Dimension.abc_text_size_title_material;
 			global::Xamarin.Forms.DualScreen.Resource.Dimension.abc_text_size_title_material_toolbar = global::XamarinTV.Droid.Resource.Dimension.abc_text_size_title_material_toolbar;
-			global::Xamarin.Forms.DualScreen.Resource.Dimension.browser_actions_context_menu_max_width = global::XamarinTV.Droid.Resource.Dimension.browser_actions_context_menu_max_width;
-			global::Xamarin.Forms.DualScreen.Resource.Dimension.browser_actions_context_menu_min_padding = global::XamarinTV.Droid.Resource.Dimension.browser_actions_context_menu_min_padding;
 			global::Xamarin.Forms.DualScreen.Resource.Dimension.cardview_compat_inset_shadow = global::XamarinTV.Droid.Resource.Dimension.cardview_compat_inset_shadow;
 			global::Xamarin.Forms.DualScreen.Resource.Dimension.cardview_default_elevation = global::XamarinTV.Droid.Resource.Dimension.cardview_default_elevation;
 			global::Xamarin.Forms.DualScreen.Resource.Dimension.cardview_default_radius = global::XamarinTV.Droid.Resource.Dimension.cardview_default_radius;
@@ -6075,11 +6069,6 @@ namespace XamarinTV.Droid
 			global::Xamarin.Forms.DualScreen.Resource.Id.bottom = global::XamarinTV.Droid.Resource.Id.bottom;
 			global::Xamarin.Forms.DualScreen.Resource.Id.bottomtab_navarea = global::XamarinTV.Droid.Resource.Id.bottomtab_navarea;
 			global::Xamarin.Forms.DualScreen.Resource.Id.bottomtab_tabbar = global::XamarinTV.Droid.Resource.Id.bottomtab_tabbar;
-			global::Xamarin.Forms.DualScreen.Resource.Id.browser_actions_header_text = global::XamarinTV.Droid.Resource.Id.browser_actions_header_text;
-			global::Xamarin.Forms.DualScreen.Resource.Id.browser_actions_menu_items = global::XamarinTV.Droid.Resource.Id.browser_actions_menu_items;
-			global::Xamarin.Forms.DualScreen.Resource.Id.browser_actions_menu_item_icon = global::XamarinTV.Droid.Resource.Id.browser_actions_menu_item_icon;
-			global::Xamarin.Forms.DualScreen.Resource.Id.browser_actions_menu_item_text = global::XamarinTV.Droid.Resource.Id.browser_actions_menu_item_text;
-			global::Xamarin.Forms.DualScreen.Resource.Id.browser_actions_menu_view = global::XamarinTV.Droid.Resource.Id.browser_actions_menu_view;
 			global::Xamarin.Forms.DualScreen.Resource.Id.buttonPanel = global::XamarinTV.Droid.Resource.Id.buttonPanel;
 			global::Xamarin.Forms.DualScreen.Resource.Id.cancel_action = global::XamarinTV.Droid.Resource.Id.cancel_action;
 			global::Xamarin.Forms.DualScreen.Resource.Id.center = global::XamarinTV.Droid.Resource.Id.center;
@@ -6315,8 +6304,6 @@ namespace XamarinTV.Droid
 			global::Xamarin.Forms.DualScreen.Resource.Layout.abc_select_dialog_material = global::XamarinTV.Droid.Resource.Layout.abc_select_dialog_material;
 			global::Xamarin.Forms.DualScreen.Resource.Layout.abc_tooltip = global::XamarinTV.Droid.Resource.Layout.abc_tooltip;
 			global::Xamarin.Forms.DualScreen.Resource.Layout.BottomTabLayout = global::XamarinTV.Droid.Resource.Layout.BottomTabLayout;
-			global::Xamarin.Forms.DualScreen.Resource.Layout.browser_actions_context_menu_page = global::XamarinTV.Droid.Resource.Layout.browser_actions_context_menu_page;
-			global::Xamarin.Forms.DualScreen.Resource.Layout.browser_actions_context_menu_row = global::XamarinTV.Droid.Resource.Layout.browser_actions_context_menu_row;
 			global::Xamarin.Forms.DualScreen.Resource.Layout.custom_dialog = global::XamarinTV.Droid.Resource.Layout.custom_dialog;
 			global::Xamarin.Forms.DualScreen.Resource.Layout.design_bottom_navigation_item = global::XamarinTV.Droid.Resource.Layout.design_bottom_navigation_item;
 			global::Xamarin.Forms.DualScreen.Resource.Layout.design_bottom_sheet_dialog = global::XamarinTV.Droid.Resource.Layout.design_bottom_sheet_dialog;
