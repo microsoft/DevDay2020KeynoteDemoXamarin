@@ -47,6 +47,11 @@ namespace XamarinTV.ViewModels.Base
             return true;
         }
 
+        public virtual bool OnBackButtonPressed()
+        {
+            return false;
+        }
+
         public virtual Task InitializeAsync(object navigationData) => Task.FromResult(false);
 
         public event PropertyChangedEventHandler PropertyChanged;
