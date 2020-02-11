@@ -1,4 +1,4 @@
-# Welcome to Xamarint TV
+# Welcome to Xamarin TV
 
 ### Full dual-screen enabled app.
 
