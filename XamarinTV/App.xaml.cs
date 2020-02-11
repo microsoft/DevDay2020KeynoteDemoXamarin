@@ -2,6 +2,7 @@
 using Xamarin.Forms.PlatformConfiguration;
 using Xamarin.Forms.PlatformConfiguration.WindowsSpecific;
 using FormsApplication = Xamarin.Forms.Application;
+using System.Collections.Generic;
 
 namespace XamarinTV
 {
@@ -10,6 +11,8 @@ namespace XamarinTV
         static MainPage _mainPage;
         public App()
         {
+            Xamarin.Forms.Device.SetFlags(new List<string>() { "StateTriggers_Experimental", "IndicatorView_Experimental", "CarouselView_Experimental", "MediaElement_Experimental" });
+
             InitializeComponent();
 
             if (_mainPage != null)
@@ -20,8 +23,9 @@ namespace XamarinTV
             }
 
             _mainPage = new MainPage();
-            MainPage = _mainPage; 
-            
+            MainPage = _mainPage;
+
+
             On<Windows>().SetImageDirectory("Assets");
         }
 
